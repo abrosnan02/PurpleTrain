@@ -1,0 +1,981 @@
+@font-face {
+    font-family: 'Inter';
+    font-weight: 100 900;
+    font-display: swap;
+    font-style: normal;
+    font-named-instance: 'Regular';
+    src: url("fonts/Inter.var.woff2?v=3.19") format("woff2");
+}
+
+:root {
+    --stationBoxHeight: 40px;
+    --stationBoxTop: 20px;
+    --stationBoxLeft: 20px;
+    --stationBoxGap: 10px;
+    --stationBoxLabelHeight: 20px;
+    --stationBoxPadding: 20px;
+    --stationBoxFontSize: 15px;
+    --stationBoxLabelFontSize: 14px;
+
+    --toFromBoxHeight: calc(
+        (var(--stationBoxHeight) * 2) + 
+        (var(--stationBoxTop) * 3) +
+        (var(--stationBoxGap)) +
+        (var(--stationBoxLabelHeight) * 2)
+    );
+
+    --switchDirButtonHeight: 55px;
+    --switchDirButtonRight: 30px;
+    
+    --white: hsl(240, 17%, 92%);
+    --backgroundColor: hsl(240, 12%, 14%);
+    --foregroundColor: hsla(240, 12%, 15%, 0.6);
+
+    --buttonTextColor: #e6cffc;
+    --buttonLabelColor: rgba(220, 220, 240, .75);
+    --buttonColor: hsla(270, 20%, 50%, .6);
+    --buttonHoverColor: hsla(270, 20%, 50%, .9);
+
+    --scheduleTitleColor: rgb(235, 235, 240);
+
+    --scheduleColor: hsl(240, 12%, 25%);
+    --scheduleLineColor: hsl(270, 20%, 50%);
+    --scheduleLineTextColor: hsl(270, 93%, 95%);
+    --scheduleText: hsla(240, 0%, 100%, 0.5);
+    
+    --crPurple: #80276C;
+    --crPurpleLight: #834178;
+
+    --busYellow: #FFC72C;
+    --busYellowLight: #ffcb3b;
+    --busYellowLight: rgb(255, 221, 125);
+
+    --scheduleTitleHeight: 50px;
+    --scheduleTitleLineHeight: 50px;
+    --scheduleTitlePaddingLeft: 30px;
+    --scheduleTitlePaddingTop: 20px;
+
+    --scheduleWidth: calc(100% - 30px);
+    --scheduleHeight: 165px;
+    --scheduleLeft: 15px;
+    --scheduleBorderRadius: 8px;
+    --scheduleMarginBottom: 40px;
+
+    --pc60: 60%;
+    --pc50: 50%;
+
+    --px250: 250px;
+    --px200: 200px;
+    --px150: 150px;
+    --px118: 118px;
+    --px100: 100px;
+    --px88: 88px;
+    --px68: 68px;
+    --px60: 60px;
+    --px50: 50px;
+    --px42: 42px;
+    --px40: 40px;
+    --px35: 35px;
+    --px32: 32px;
+    --px30: 30px;
+    --px25: 25px;
+    --px24: 24px;
+    --px22: 22px;
+    --px20: 20px;
+    --px18: 18px;
+    --px16: 16px;
+    --px15: 15px;
+    --px12: 12px;
+    --px10: 10px;
+    --px8: 8px;
+    --px6: 6px;
+    --px5: 5px;
+    --px3: 3px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', Sans-Serif;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+body {
+    background-color: var(--backgroundColor);
+    color: var(--white);
+}
+
+@media (max-width: 375px) {
+    :root {
+        --stationBoxHeight: 32px;
+        --stationBoxTop: 16px;
+        --stationBoxLeft: 16px;
+        --stationBoxGap: 8px;
+        --stationBoxLabelHeight: 16px;
+        --stationBoxPadding: 16px;
+        --stationBoxFontSize: 12px;
+        --stationBoxLabelFontSize: 11.2px;
+
+        --switchDirButtonHeight: 44px;
+        --switchDirButtonRight: 24px;
+
+        --scheduleTitleHeight: 40px;
+        --scheduleTitleLineHeight: 40px;
+        --scheduleTitlePaddingLeft: 24px;
+        --scheduleTitlePaddingTop: 16px;
+
+        --scheduleWidth: calc(100% - 24px);
+        --scheduleHeight: 132px;
+        --scheduleLeft: 12px;
+        --scheduleBorderRadius: 6.4px;
+        --scheduleMarginTop: 16px;
+        --scheduleMarginBottom: 32px;
+
+        --pc60: 50%;
+        --pc50: 40%;
+    
+        --px250: 200px;
+        --px200: 160px;
+        --px150: 120px;
+        --px118: 94.4px;
+        --px100: 80px;
+        --px88: 70.4px;
+        --px68: 54.4px;
+        --px60: 48px;
+        --px50: 40px;
+        --px42: 33.6px;
+        --px40: 32px;
+        --px35: 28px;
+        --px32: 25.6px;
+        --px30: 24px;
+        --px25: 20px;
+        --px24: 19.2px;
+        --px22: 17.6px;
+        --px20: 16px;
+        --px18: 14.4px;
+        --px16: 12.8px;
+        --px15: 12px;
+        --px12: 9.6px;
+        --px10: 8px;
+        --px8: 6.4px;
+        --px6: 4.8px;
+        --px5: 4px;
+        --px3: 2.4px;
+    }
+}
+
+::selection {
+    color: var(--buttonTextColor);
+    background: var(--buttonColor);
+  }
+
+.bottomBox {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    height: var(--toFromBoxHeight);
+    background-color: var(--foregroundColor);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0px 30px 40px 40px rgba(0,0,0,0.25);
+    max-width: 500px;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.button {
+    background-color: var(--buttonColor);
+    color: var(--buttonTextColor);
+    border: 0;
+    transition: background-color .1s;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: pointer;
+}
+/*.button:hover {
+    background-color: var(--buttonHoverColor);
+} */
+
+.toFromBox {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    height: var(--toFromBoxHeight);
+    max-width: 500px;
+    transition: opacity .15s;
+}
+
+.calendarBox {
+    visibility: hidden;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    height: 100%;
+    max-width: 500px;
+    opacity: 0;
+}
+
+.calendarBox #backButton {
+    position: absolute;
+    border: none;
+    bottom: var(--px50);
+    left: calc(50% - var(--px100));
+    height: var(--stationBoxHeight);
+    width: var(--px200);
+    text-align: center;
+    font-weight: 700;
+    font-size: var(--px16);
+    border-radius: var(--switchDirButtonHeight);
+}
+
+
+
+.calendar {
+    position: absolute;
+    width: 95%;
+    height: var(--pc60);
+    left: 2.5%;
+    top: calc(10px + var(--stationBoxHeight) * 2);
+    border-radius: 12px;
+    table-layout: fixed;
+    background-color: hsla(240, 33%, 3%, 0.25);
+    white-space: nowrap;
+}
+
+.calendar #calendarTitle {
+    position: relative;
+    padding-top: 15px;
+    width: 100%;
+    height: var(--px20);
+    font-weight: 700;
+    font-size: var(--px18);
+    text-align: center;
+}
+
+.calendar #weekdays {
+    position: relative;
+    padding-top: 15px;
+    width: calc(100% - 10px);
+    left: 5px;
+    height: 25px;
+    font-weight: 500;
+    font-size: var(--px18);
+    text-align: center;
+    list-style-type: none;
+}
+
+.calendar li {
+    float: left;
+    width: calc(100% / 7);
+    height: 100%;
+    color: var(--buttonTextColor);
+}
+
+.calendar #days {
+    position: relative;
+    
+    width: 100%;
+    height: calc(100% - var(--switchDirButtonHeight) - 70px);
+    margin-top: var(--px10);
+    margin-left: 0;
+    background-color: hsla(240, 33%, 3%, 0.25);
+}
+
+.calendar #sunday {
+    position: absolute;
+    width: calc(100% / 7);
+    height: 100%;
+    background-color: hsla(240, 33%, 3%, 0.125);
+}
+
+.calendar #saturday {
+    position: absolute;
+    width: calc(100% / 7);
+    height: 100%;
+    background-color: hsla(240, 33%, 3%, 0.125);
+    right: 0;
+}
+
+.calendar table {
+    position: absolute;
+    border-collapse: collapse;
+    width: 100%;
+    height: 100%;
+}
+
+.calendar table tr td {
+    text-align: center;
+    cursor: pointer;
+    font-size: var(--px18);
+}
+
+.calendar #currentDay{
+    color: var(--buttonTextColor);
+    background-color: var(--buttonColor);
+    margin: 5px;
+}
+
+.calendar #otherMonth{
+    color: rgba(200, 200, 255, .2);
+}
+
+.calendar #resetButton {
+    position: absolute;
+    border: none;
+    height: var(--stationBoxHeight);
+    width: calc((100% / 3) - 2px);
+    left: calc((100% / 3) + 1px);
+    text-align: center;
+    font-weight: 700;
+    font-size: var(--px16);
+}
+
+.calendar #left {
+    position: absolute;
+    height: calc(var(--stationBoxHeight));
+    width: calc((100% / 3) - 1px);
+    border-bottom-left-radius: 12px;
+    font-size: var(--px25);
+    text-align: center;
+    line-height: calc(var(--stationBoxHeight));
+}
+
+.calendar #right {
+    position: absolute;
+    height: calc(var(--stationBoxHeight));
+    width: calc((100% / 3) - 1px);
+    border-bottom-right-radius: var(--px12);
+    font-size: var(--px25);
+    right: 0;
+    text-align: center;
+    line-height: calc(var(--stationBoxHeight));
+}
+
+.filler {
+    height: calc(var(--toFromBoxHeight) + var(--stationBoxHeight) * 2);
+    width: 100%;
+    color: var(--scheduleColor);
+    text-align: center;
+    line-height: var(--stationBoxHeight);
+    font-size: var(--px16);
+}
+
+.stationBox {
+    position: relative;
+    display: block;
+    width: calc(100% - (var(--switchDirButtonHeight) + var(--stationBoxLeft) + var(--px60)));
+    
+    top: var(--stationBoxTop);
+    left: var(--stationBoxLeft);
+    
+    margin-bottom: var(--stationBoxGap);
+}
+
+.stationBoxLabel {
+    display: block;
+    padding-left: 15px;
+    height: var(--stationBoxLabelHeight);
+
+
+    font-size: var(--stationBoxLabelFontSize);
+    font-weight: 700;
+
+    color: var(--buttonLabelColor);
+}
+
+.stationSelectButton {
+    border-radius: calc(var(--stationBoxHeight) / 2);
+    font-weight: 700;
+    font-size: var(--stationBoxFontSize);
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-left: var(--stationBoxPadding);
+    padding-right: var(--stationBoxPadding);
+    height: var(--stationBoxHeight);
+    width: 100%;
+
+    cursor: pointer;
+}
+
+.switchDirButton {
+    position: absolute;
+    width: var(--switchDirButtonHeight);
+    height: var(--switchDirButtonHeight);
+    top: calc(50% - var(--switchDirButtonHeight) - 8px);
+    right: var(--switchDirButtonRight);
+
+    transform: rotate(0deg);
+    transition: opacity .25s;
+
+    border-radius: 50%;
+}
+
+.buttonImage {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    top: 25%;
+    left: 25%;
+}
+
+.calendarButton {
+    position: absolute;
+    width: var(--switchDirButtonHeight);
+    height: var(--switchDirButtonHeight);
+    bottom: calc(50% - var(--switchDirButtonHeight) - 8px);
+    right: var(--switchDirButtonRight);
+
+    transform: rotate(0deg);
+    transition: opacity .25s;
+
+    border-radius: 50%;
+}
+
+.searchBox {
+    position: absolute;
+    z-index: 99999;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .65);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+}
+
+.searchInput {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    max-width: calc(100% - var(--stationBoxLeft));
+    padding: var(--stationBoxTop);
+    height: 30px;
+    vertical-align: middle;
+    padding-right: 0;
+
+    resize: none;
+
+    font-size: 20px;
+    font-weight: 700;
+    background: rgba(0, 0, 0, 0);
+    color: var(--white);
+    border: 0;
+    outline: 0;
+    z-index: 9999999;
+}
+
+.searchInputPreview {
+    position: fixed;
+    top: 0;
+    width: calc(100% - var(--stationBoxLeft));
+    max-width: calc(100%);
+    padding: var(--stationBoxTop);
+    margin-top: 0;
+    height: 30px;
+    vertical-align: middle;
+    padding-right: 0;
+
+    font-size: 20px;
+    font-weight: 700;
+    border: 0;
+    background: rgba(0, 0, 0, 0);
+    color: rgba(255, 255, 255, .5);
+    z-index: 9999998;
+}
+
+.searchInputPreview strong {
+    font-weight: 400;
+    font-size: 20px;
+    color:rgba(255, 255, 255, .75);
+    background-color: rgba(255, 255, 255, .25);
+    padding: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    margin-left: 3px;
+}
+
+.searchInput::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: white;
+    opacity: .65; /* Firefox */
+}
+
+.searchResults {
+    position: relative;
+    width: 100%;
+    height: calc(100% - var(--stationBoxTop) * 3);
+    top: calc(var(--stationBoxTop) * 3);
+}
+
+.result {
+    position: relative;
+    display: block;
+    width: calc(100% - var(--stationBoxLeft));
+    height: 40px;
+    padding-left: var(--stationBoxLeft);
+    padding-top: 20px;
+    color: var(--white);
+    background-color: rgba(255, 255, 255, .0);
+    cursor: pointer;
+
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.result strong {
+    color: hsl(270, 50%, 72%);
+    font-weight: 600;
+}
+
+.municipality {
+    font-size: 16px;
+    font-weight: 300 !important;
+    color: rgba(255, 255, 255, .45) !important;
+}
+
+.loader {
+    position: absolute;
+    border: var(--px6);
+    border-style: solid;
+    border-color: hsla(270, 54%, 80%, 0.5);
+    border-radius: 50%;
+    border-bottom: var(--px6) solid var(--backgroundColor);
+    width: var(--px50);
+    height: var(--px50);
+    left: calc(50% - var(--px25));
+    top: calc(50% - var(--px25) - var(--toFromBoxHeight) / 2);
+    -webkit-animation: spin .55s linear infinite;
+    animation: spin .55s linear infinite;
+}
+
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.schedules {
+    position: absolute;
+    overflow-y:auto;
+    width: 100%;
+    max-width: 500px;
+    height: calc(100%);
+}
+
+.scheduleTitle {
+    width: calc(100% - 60px);
+    height: var(--scheduleTitleHeight);
+    line-height: var(--scheduleTitleLineHeight);
+    padding-left: var(--scheduleTitlePaddingLeft);
+    padding-top: var(--scheduleTitlePaddingTop);
+    font-size: var(--px32);
+    font-weight: 700;
+    color: var(--white);
+}
+
+.schedule {
+    position: relative;
+    width: calc(100% - var(--px30));
+    height: var(--scheduleHeight);
+    left: var(--scheduleLeft);
+    background-color: var(--scheduleColor);
+    border-radius: var(--scheduleBorderRadius);
+    margin-top: var(--px20);
+    margin-bottom: var(--scheduleMarginBottom);
+    box-shadow: 0px 0px 40px 0px rgba(0,0,0,0.4);
+}
+
+.scheduleTime {
+    position: absolute;
+    width: calc(100% - var(--px30));
+    height: var(--px20);
+    line-height: var(--px20);
+    font-size: var(--px22);
+    padding-left: var(--px15);
+    padding-top: 0;
+    top: var(--px50);
+    color: var(--white);
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.scheduleTime strong{
+    font-size: var(--px12);
+    font-weight: 700;
+}
+
+.scheduleTime b {
+    font-weight: 400;
+    font-size: var(--px18);
+    color: var(--scheduleText);
+}
+
+.scheduleLine {
+    position: absolute;
+    width: calc(100% - var(--px15));
+    height: var(--px35);
+    line-height: var(--px35);
+    font-size: var(--px15);
+    color: var(--scheduleLineTextColor);
+    background-color: var(--scheduleLineColor);
+    border-top-left-radius: var(--px8);
+    border-top-right-radius: var(--px8);
+    padding-left: var(--px15);
+    padding-right: 0;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.scheduleLineAmtrak {
+    color: hsl(225, 7%, 95%);
+    background-color: hsl(225, 30%, 55%);
+}
+
+.scheduleNumber {
+    position: absolute;
+    height: 100%;
+    top: 0;
+    line-height: var(--px35);
+    font-size: var(--px16);
+    text-align: right;
+    padding-right: var(--px15);
+    right: 0;
+    font-weight: 500;
+    padding-left: var(--px10);
+    padding-right: var(--px10);
+    color: black;
+    border-top-right-radius: var(--px8);
+    /*background-color: hsl(270, 20%, 32.5%);*/
+    color: var(--busYellowLight);
+}
+
+.scheduleNumberAmtrak {
+    /*background-color: hsl(225, 30%, 37.5%);*/
+    color: hsl(225, 7%, 95%);
+}
+
+.scheduleWait {
+    position: absolute;
+    height: var(--px20);
+    line-height: var(--px20);
+    font-size: var(--px16);
+    font-weight: 500;
+    text-align: right;
+    right: var(--px12);
+    bottom: var(--px40);
+    color: var(--scheduleText);
+}
+
+.scheduleCost {
+    position: absolute;
+    height: var(--px20);
+    line-height: var(--px20);
+    font-size: var(--px16);
+    font-weight: 500;
+    text-align: right;
+    right: var(--px12);
+    bottom: var(--px60);
+    color: var(--scheduleText);
+}
+
+.scheduleDirection {
+    position: absolute;
+    height: var(--px20);
+    padding-bottom: var(--px15);
+    line-height: var(--px20);
+    font-size: var(--px25);
+    text-align: right;
+    font-weight: 400;
+    right: 0;
+    bottom: 0;
+    padding-right: var(--px12);
+    color: var(--white)
+}
+
+.scheduleTo {
+    position: absolute;
+    height: var(--px35);
+    padding-left: var(--px15);
+    line-height: var(--px35);
+    font-size: var(--px16);
+    text-align: left;
+    left: 0;
+    top: var(--px68);
+    font-weight: 500;
+    padding-right: var(--px12);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: calc(100% - var(--px150));
+    color: var(--scheduleText);
+}
+
+.scheduleFrom {
+    position: absolute;
+    height: var(--px35);
+    padding-left: var(--px15);
+    line-height: var(--px35);
+    font-size: var(--px16);
+    text-align: left;
+    left: 0;
+    top: var(--px88);
+    font-weight: 500;
+    padding-right: var(--px12);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: calc(100% - var(--px150));
+    color: var(--scheduleText);
+}
+
+.schedulePrediction {
+    position: absolute;
+    height: var(--px15);
+    padding-left: var(--px15);
+    line-height: var(--px15);
+    font-size: var(--px16);
+    text-align: left;
+    left: 0;
+    top: var(--px118);
+    font-weight: 600;
+    padding-right: var(--px12);
+    color: rgb(255, 175, 175);
+}
+
+.centeredDiv {
+    margin: auto;
+    width: var(--px250);
+    height: var(--stationBoxHeight);
+}
+
+.container {
+    position: absolute;
+    padding-left: var(--px42);
+    height: var(--stationBoxHeight);
+    line-height: var(--stationBoxHeight);
+    top: calc(var(--pc60) + var(--stationBoxHeight) * 2.5);
+    cursor: pointer;
+    font-size: var(--px18);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Hide the browser's default checkbox */
+  .container input {
+    margin: auto;
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+  
+  /* Create a custom checkbox */
+  .checkmark {
+    position: absolute;
+    top: calc(50% - var(--px12));
+    left: var(--px10);
+    height: var(--px24);
+    width: var(--px24);
+    border-radius: var(--px5);
+    border-color: var(--white);
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  /* When the checkbox is checked, add a blue background */
+  .container input:checked ~ .checkmark {
+    background-color: hsla(270, 20%, 50%, .7);
+  }
+  
+  /* Create the checkmark/indicator (hidden when not checked) */
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+  
+  /* Show the checkmark when checked */
+  .container input:checked ~ .checkmark:after {
+    display: block;
+  }
+  
+  /* Style the checkmark/indicator */
+  .container .checkmark:after {
+    left: var(--px8);
+    top: var(--px3);
+    width: var(--px5);
+    height: var(--px12);
+    border: solid var(--buttonTextColor);
+    border-width: 0 var(--px3) var(--px3) 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+
+.tripInformation {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    max-width: 500px;
+    visibility: hidden;
+}
+
+.tripInformation #map {
+    width: 100%;
+    height: 35%;
+    border: none;
+}
+
+.tripInformation #trainInformation {
+    position: fixed;
+    width: 100%;
+    height: calc(65% + 25px);
+    max-width: 500px;
+    bottom: 0;
+    background-color: hsla(240, 12%, 15%, 0.75);
+
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+
+    box-shadow: 0px 0px 20px 10px rgba(0,0,0,.5);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    z-index: 999;
+}
+
+.devInfo {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    padding-top: 25px;
+    padding-bottom: 25px;
+}
+
+.devInfo p {
+    width: 100%;
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
+    color: var(--scheduleText);
+    -webkit-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+.alert {
+    position: relative;
+    width: calc(100% - var(--px30));
+    height: auto;
+    left: var(--scheduleLeft);
+    background-color: rgba(255, 199, 44, .175);
+    border-radius: var(--scheduleBorderRadius);
+    margin-top: var(--px20);
+    margin-bottom: var(--scheduleMarginBottom);
+    box-shadow: 0px 0px 40px 0px rgba(0,0,0,0.4);
+}
+
+.alert img {
+    position: absolute;
+    width: calc(var(--px35) / 2);
+    height: calc(var(--px35) / 2);
+    left: calc(var(--px35) / 4 + var(--px8));
+    top: calc(var(--px35) / 4);
+}
+
+.alert #line {
+    position: relative;
+    width: calc(100% - var(--px15));
+    height: var(--px35);
+    line-height: var(--px35);
+    font-size: var(--px15);
+    left: calc(var(--px35) + var(--px8));
+    padding-right: 0;
+    color: var(--busYellow);
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.alert #text {
+    position: relative;
+    width: calc(100% - var(--px15) * 2);
+    line-height: var(--px20);
+    font-size: var(--px15);
+    padding-left: var(--px15);
+    padding-right: var(--px15);
+    padding-bottom: var(--px8);
+    color: var(--white);
+    font-weight: 400;
+}
+
+.info {
+    position: relative;
+    width: calc(100% - var(--px30));
+    height: auto;
+    left: var(--scheduleLeft);
+    background-color: hsla(220, 100%, 75%, 0.25);
+    border-radius: var(--scheduleBorderRadius);
+    margin-top: var(--px20);
+    margin-bottom: var(--scheduleMarginBottom);
+    box-shadow: 0px 0px 40px 0px rgba(0,0,0,0.4);
+}
+
+.info img {
+    position: absolute;
+    width: calc(var(--px35) / 2);
+    height: calc(var(--px35) / 2);
+    left: calc(var(--px35) / 4 + var(--px6));
+    top: calc(var(--px35) / 4);
+}
+
+.info #line {
+    position: relative;
+    width: calc(100% - var(--px15));
+    height: var(--px35);
+    line-height: var(--px35);
+    font-size: var(--px15);
+    left: calc(var(--px35) + var(--px6));
+    padding-right: 0;
+    color: #93b3f3;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.info #text {
+    position: relative;
+    width: calc(100% - var(--px15) * 2);
+    line-height: var(--px20);
+    font-size: var(--px15);
+    padding-left: var(--px15);
+    padding-right: var(--px15);
+    padding-bottom: var(--px12);
+    color: var(--white);
+    font-weight: 400;
+}
+
+a:link {
+    color: var(--white);
+  }
+  
+a:visited {
+color: var(--white);
+}

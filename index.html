@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <title>MBTA Train Time - PurpleTrain</title>
+        <meta name="description" content="Live MBTA train schedules">
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="style.css">
+        <meta name="darkreader-lock">
+        <link rel="icon" href="favicon.ico">
+        <script src="client.js" crossorigin="anonymous"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body></body>
+        <div class="schedules" id="schedules">
+            <p class="scheduleTitle">PurpleTrain</p>
+            <!--div class="alert">
+                <img src="images/alert.svg">
+                <p id="line">ALERT</p>
+                <p id="text">No more trains only busses, eat shit</p>
+            </div-->
+            <div class="info">
+                <img src="images/info.svg">
+                <p id="line">INFO</p>
+                <p id="text">
+                    Welcome to PurpleTrain.<br><br>
+                    This is a site for checking MBTA Commuter Rail schedules.<br><br>
+                    Enter an origin and destination station, then the next train schedule will appear.<br><br>
+                    <a href="https://cdn.mbta.com/sites/default/files/2023-01/2023-01-23-commuter-rail-map.pdf" target="_blank" rel="noopener noreferrer">Link to Commuter Rail Map</a>
+                </p>
+            </div>
+        </div>
+
+        <div class="bottomBox" id="bottomBox">
+            <div class="toFromBox" id="toFromBox">
+                <div class="stationBox">
+                    <label class="stationBoxLabel">FROM</label>
+                    <button class="stationSelectButton button" id="fromButton" onclick="get(0)">SELECT A STATION</button>
+                </div>
+                <div class="stationBox">
+                    <label class="stationBoxLabel">TO</label>
+                    <button class="stationSelectButton button" id="toButton" onclick="get(1)">SELECT A STATION</button>
+                </div>
+                
+                <button class="switchDirButton button" id="switchDirButton" onclick="swap()">
+                    <img class="buttonImage" alt="Switch direction button icon" src="images/swap.svg">
+                </button>
+                <button class="calendarButton button" id="calendarButton" onclick="calendar()">
+                    <img class="buttonImage" alt="Calendar button icon" src="images/calendar.svg">
+                </button>
+            </div>
+
+            <div class="calendarBox" id="calendarBox">
+                <h1 class="scheduleTitle"style="position: relative">Change date</h1>
+                <button class="button" id="backButton" onclick="closeCalendar(); updateButtons()">DONE</button>
+                <div class="calendar">
+                    <p id="calendarTitle">JANUARY</p>
+                    <ul id="weekdays">
+                        <li>S</li>
+                        <li>M</li>
+                        <li>T</li>
+                        <li>W</li>
+                        <li>T</li>
+                        <li>F</li>
+                        <li>S</li>
+                    </ul>
+                    <div id="days">
+                        <div id="sunday"></div>
+                        <div id="saturday"></div>
+                        <table id="calendarTable"></table>
+                    </div>
+                    <button class="button" id="resetButton" onclick="updateCalendar(1, true)">RESET</button>
+                    <a class="button" id="left" onclick="updateCalendar(-1)"><-</a>
+                    <a class="button" id="right" onclick="updateCalendar(1)">-></a>
+                </div>
+                
+                <div class="centeredDiv">
+                    <label id="includeDepartedContainer" class="container">Include departed trains
+                        <input id="includeDeparted" type="checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <!--div class="tripInformation" id="tripInformation">
+            <iframe id="map" 
+                src="https://www.openstreetmap.org/export/embed.html?bbox=-70.62748789787294%2C42.65560786535008%2C-70.62523752450944%2C42.65713858665206&amp;layer=mapnik">
+            </iframe>
+            <div id="trainInformation">
+                <div class="devInfo">
+                    <p><strong>Vehicle ID: </strong>9999</p>
+                    <p><strong>Trip ID: </strong>CR-99999-999</p>
+                </div>
+            </div>
+        </div-->
+    </body>
+</html>
