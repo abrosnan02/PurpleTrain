@@ -10,6 +10,7 @@ window.onload = function () {
   includeDepartedContainer = document.getElementById("includeDepartedContainer")
   tripInformation = document.getElementById("tripInformation")
   trainInformation = document.getElementById("trainInformation")
+  tripInfoScrollBox = document.getElementById("tripInfoScrollBox")
 
   calendarDate = new Date()
 
@@ -38,14 +39,15 @@ window.onload = function () {
       bottomBox.style.borderTopLeftRadius = '20px'
       bottomBox.style.borderTopRightRadius = '20px'
       bottomBox.style.left = 'calc(50% - 250px)'
+      tripInformation.style.left = 'calc(50% - 250px)'
       bottomBox.style.boxShadow = '0px 0px 40px 0px rgba(0,0,0,0.4)'
       schedules.style.left = 'calc(50% - 250px)'
-      //tripInformation.style.left = 'calc(50% - 250px)'
+      tripInformation.style.left = 'calc(50% - 250px)'
     } else {
       schedules.style.width = '100%'
       schedules.style.left = '0'
-      //tripInformation.style.width = '100%'
-      //tripInformation.style.left = '0'
+      tripInformation.style.width = '100%'
+      tripInformation.style.left = '0'
       bottomBox.style.borderRadius = '0'
       bottomBox.style.boxShadow = '0px 40px 40px 40px rgba(0,0,0,0.4)'
       bottomBox.style.left = '0'
@@ -248,6 +250,102 @@ function closeCalendar() {
   calendarBox.style.visibility = 'hidden'
 }
 
+function getTripInfo(carrier, id, to, from) {
+  var tripInfoScrollBox = document.getElementById("tripInfoScrollBox")
+  tripInfoScrollBox.textContent = ''
+
+  tripInformation.style.visibility = 'initial'
+
+  
+  
+
+  var loader = document.createElement('div')
+  loader.classList.add("loader")
+  loader.style.top = 'calc(50% - var(--px25))'
+  tripInfoScrollBox.appendChild(loader)
+  
+  
+  fetch('/getTripInfo', {
+    method: 'POST',
+    mode: 'cors',
+    body: JSON.stringify({"carrier": carrier, "id": id, "to": to, 'from': from}),
+  }).then(async response => {
+    if (!response.ok) {
+        console.log('error')
+    }
+
+    tripInfo = await response.json()
+
+    if (tripInfo) {
+      tripInfoScrollBox.textContent = ''
+
+      var tripPath = document.createElement('div')
+      tripPath.classList.add('tripPath')
+
+      
+
+      if (tripInfo.headsign) {
+        //document.getElementById('tripHeadsign').textContent = tripInfo.headsign
+        console.log(tripInfo.headsign)
+      }
+      if (tripInfo.path) {
+        var stops = tripInfo.path.length
+        for (var i = 0; i < stops; i++) {
+          var stop = document.createElement('div')
+          stop.classList.add("stop")
+
+          var time = document.createElement('p')
+          time.innerHTML = tripInfo.path[i].time.hour + ':' +
+            tripInfo.path[i].time.min + '<strong>' +
+            tripInfo.path[i].time.ampm + '</strong>'
+
+          var stopName = document.createElement('p')
+          stopName.textContent = tripInfo.path[i].name
+          stopName.classList.add("stopName")
+
+          var dotBox = document.createElement('div')
+          var dot = document.createElement('div')
+          var line = document.createElement('div')
+          line.classList.add("line")
+          dot.classList.add("dot")
+          dotBox.appendChild(line)
+          dotBox.appendChild(dot)
+          
+          if (i == 0 || i == stops - 1) {
+            time.classList.add("originTime")
+            stopName.classList.add("bold")
+            if (i == stops - 1) {
+              dotBox.classList.add("terminus")
+              stop.style.marginBottom = 'var(--stopWidth)'
+            } else {
+              dotBox.classList.add("origin")
+            }
+          } else {
+            dotBox.classList.add("infill")
+            time.classList.add("infillTime")
+          }
+
+          stop.appendChild(time)
+          stop.appendChild(stopName)
+          stop.appendChild(dotBox)
+          tripPath.appendChild(stop)
+        }
+
+        tripInfoScrollBox.appendChild(tripPath)
+      } else if (tripInfo.error) {
+        var error = document.createElement('p')
+        error.textContent = tripInfo.error
+        error.classList.add("error")
+        tripInfoScrollBox.appendChild(error)
+      }
+    }
+  });
+}
+
+function closeTripInfo() {
+  tripInformation.style.visibility = 'hidden'
+}
+
 function getTrainTime(date, clearSchedules, addFiller) {
   var today = new Date().yyyymmdd();
   
@@ -281,24 +379,39 @@ function getTrainTime(date, clearSchedules, addFiller) {
         var arrayLength = trainTimes.length
         for (var i = 0; i < arrayLength; i++) {
           if (trainTimes[i].type == 'trip') {
+            let carrier = trainTimes[i].carrier
             let id = trainTimes[i].id
+            let route = (trainTimes[i].route).toUpperCase()
+            let number = trainTimes[i].number
+            let prediction = trainTimes[i].prediction
+            let direction = trainTimes[i].direction
+
             var scheduleCard = document.createElement('div')
             scheduleCard.classList.add("schedule")
             scheduleCard.onclick = function() {
-              console.log(id)
+              //document.getElementById('tripId').innerHTML = '<strong>Trip ID: </strong>' + id
+              document.getElementById('tripTitle').innerHTML = 'Train ' + String(number) + '<strong> ' + carrier + '</strong>'
+              document.getElementById('tripRoute').textContent = route
+              if (prediction == '') {
+                //document.getElementById('tripPrediction').textContent = direction + ' • On time'
+              } else {
+                //document.getElementById('tripPrediction').textContent = direction + ' • ' + prediction
+              }
+              getTripInfo(carrier, id, toStation, fromStation)
             }
+
             if (date == today && trainTimes[i].wait == 'Departed') {
               scheduleCard.style.opacity = .5
             }
 
             var scheduleLine = document.createElement('p')
             scheduleLine.classList.add("scheduleLine")
-            scheduleLine.textContent = (trainTimes[i].route).toUpperCase()
+            scheduleLine.textContent = route
             scheduleLine.classList.add('scheduleLine' + trainTimes[i].carrier)
 
             var scheduleNumber = document.createElement('p')
             scheduleNumber.classList.add("scheduleNumber")
-            scheduleNumber.textContent = trainTimes[i].number
+            scheduleNumber.textContent = number
             scheduleNumber.classList.add('scheduleNumber' + trainTimes[i].carrier)
 
             var scheduleTime = document.createElement('p')
@@ -331,11 +444,11 @@ function getTrainTime(date, clearSchedules, addFiller) {
 
             var schedulePrediction = document.createElement('p')
             schedulePrediction.classList.add("schedulePrediction")
-            schedulePrediction.textContent = trainTimes[i].prediction
+            schedulePrediction.textContent = prediction
             
             var scheduleDirection = document.createElement('p')
             scheduleDirection.classList.add("scheduleDirection")
-            scheduleDirection.textContent = trainTimes[i].direction
+            scheduleDirection.textContent = direction
 
 
             
@@ -354,6 +467,24 @@ function getTrainTime(date, clearSchedules, addFiller) {
             title.classList.add("scheduleTitle")
             title.textContent = trainTimes[i].text
             schedules.appendChild(title)
+          } else if (trainTimes[i].type == 'info') {
+            var info = document.createElement('div')
+            info.classList.add("info")
+
+            var img = document.createElement('img')
+            img.src = '/images/info.svg'
+            var line = document.createElement('p')
+            line.classList.add("line")
+            line.textContent = trainTimes[i].title
+
+            var text = document.createElement('p')
+            text.classList.add("text")
+            text.textContent = trainTimes[i].text
+
+            info.appendChild(img)
+            info.appendChild(line)
+            info.appendChild(text)
+            schedules.appendChild(info)
           } else if (trainTimes[i].type == 'stations') {
             fromStation = trainTimes[i].names.from
             toStation = trainTimes[i].names.to
@@ -408,6 +539,7 @@ function updateButtons() {
 
 function autocomplete(button) {
   if (searching) {return}
+  if (stops.length == 0) {return}
   var searchBox = document.createElement('div')
   searchBox.classList.add("searchBox")
 

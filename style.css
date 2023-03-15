@@ -70,6 +70,9 @@
     --px118: 118px;
     --px100: 100px;
     --px88: 88px;
+    --px85: 85px;
+    --px80: 80px;
+    --px75: 75px;
     --px68: 68px;
     --px60: 60px;
     --px50: 50px;
@@ -85,12 +88,17 @@
     --px18: 18px;
     --px16: 16px;
     --px15: 15px;
+    --px14: 14px;
     --px12: 12px;
     --px10: 10px;
     --px8: 8px;
     --px6: 6px;
     --px5: 5px;
     --px3: 3px;
+
+    --dotWidth: var(--px15);
+    --stopWidth: var(--px35);
+    --stopLineWidth: var(--px8);
 }
 
 * {
@@ -108,7 +116,7 @@ body {
     color: var(--white);
 }
 
-@media (max-width: 375px) {
+@media (max-width: 385px) {
     :root {
         --stationBoxHeight: 32px;
         --stationBoxTop: 16px;
@@ -143,6 +151,9 @@ body {
         --px118: 94.4px;
         --px100: 80px;
         --px88: 70.4px;
+        --px85: 68px;
+        --px80: 64px;
+        --px75: 60px;
         --px68: 54.4px;
         --px60: 48px;
         --px50: 40px;
@@ -158,6 +169,7 @@ body {
         --px18: 14.4px;
         --px16: 12.8px;
         --px15: 12px;
+        --px14: 11.2px;
         --px12: 9.6px;
         --px10: 8px;
         --px8: 6.4px;
@@ -455,13 +467,13 @@ body {
     width: 100%;
     max-width: calc(100% - var(--stationBoxLeft));
     padding: var(--stationBoxTop);
-    height: 30px;
+    height: var(--px30);
     vertical-align: middle;
     padding-right: 0;
 
     resize: none;
 
-    font-size: 20px;
+    font-size: var(--px20);
     font-weight: 700;
     background: rgba(0, 0, 0, 0);
     color: var(--white);
@@ -477,11 +489,11 @@ body {
     max-width: calc(100%);
     padding: var(--stationBoxTop);
     margin-top: 0;
-    height: 30px;
+    height: var(--px30);
     vertical-align: middle;
     padding-right: 0;
 
-    font-size: 20px;
+    font-size: var(--px20);
     font-weight: 700;
     border: 0;
     background: rgba(0, 0, 0, 0);
@@ -491,7 +503,7 @@ body {
 
 .searchInputPreview strong {
     font-weight: 400;
-    font-size: 20px;
+    font-size: var(--px20);
     color:rgba(255, 255, 255, .75);
     background-color: rgba(255, 255, 255, .25);
     padding: 3px;
@@ -516,14 +528,14 @@ body {
     position: relative;
     display: block;
     width: calc(100% - var(--stationBoxLeft));
-    height: 40px;
+    height: var(--px40);
     padding-left: var(--stationBoxLeft);
-    padding-top: 20px;
+    padding-top: var(--px20);
     color: var(--white);
     background-color: rgba(255, 255, 255, .0);
     cursor: pointer;
 
-    font-size: 20px;
+    font-size: var(--px20);
     font-weight: 600;
 }
 
@@ -533,7 +545,7 @@ body {
 }
 
 .municipality {
-    font-size: 16px;
+    font-size: var(--px16);
     font-weight: 300 !important;
     color: rgba(255, 255, 255, .45) !important;
 }
@@ -592,6 +604,7 @@ body {
     margin-top: var(--px20);
     margin-bottom: var(--scheduleMarginBottom);
     box-shadow: 0px 0px 40px 0px rgba(0,0,0,0.4);
+    cursor: pointer;
 }
 
 .scheduleTime {
@@ -775,18 +788,18 @@ body {
     user-select: none;
   }
   
-  /* Hide the browser's default checkbox */
-  .container input {
+/* Hide the browser's default checkbox */
+.container input {
     margin: auto;
     position: absolute;
     opacity: 0;
     cursor: pointer;
     height: 0;
     width: 0;
-  }
-  
-  /* Create a custom checkbox */
-  .checkmark {
+}
+
+/* Create a custom checkbox */
+.checkmark {
     position: absolute;
     top: calc(50% - var(--px12));
     left: var(--px10);
@@ -795,27 +808,27 @@ body {
     border-radius: var(--px5);
     border-color: var(--white);
     background-color: rgba(255, 255, 255, 0.2);
-  }
-  
-  /* When the checkbox is checked, add a blue background */
-  .container input:checked ~ .checkmark {
+}
+
+/* When the checkbox is checked, add a blue background */
+.container input:checked ~ .checkmark {
     background-color: hsla(270, 20%, 50%, .7);
-  }
-  
-  /* Create the checkmark/indicator (hidden when not checked) */
-  .checkmark:after {
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
     content: "";
     position: absolute;
     display: none;
-  }
-  
-  /* Show the checkmark when checked */
-  .container input:checked ~ .checkmark:after {
+}
+
+/* Show the checkmark when checked */
+.container input:checked ~ .checkmark:after {
     display: block;
-  }
+}
   
   /* Style the checkmark/indicator */
-  .container .checkmark:after {
+.container .checkmark:after {
     left: var(--px8);
     top: var(--px3);
     width: var(--px5);
@@ -825,53 +838,302 @@ body {
     -webkit-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
-  }
+}
 
 .tripInformation {
     position: fixed;
     width: 100%;
     height: 100%;
     max-width: 500px;
-    visibility: hidden;
+
+    background-color: hsla(240, 12%, 5%, .6);
+    backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+    
+    visibility: initial;
 }
 
 .tripInformation #map {
     width: 100%;
-    height: 35%;
+    height: 100%;
     border: none;
+    background-size: var(--px100) var(--px100);
+    background-image:
+        linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, .04) 25%,
+            rgba(255, 255, 255, .04) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .04) 75%, rgba(255, 255, 255, .04) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, .04) 25%, rgba(255, 255, 255, .04) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .04) 75%, rgba(255, 255, 255, .04) 76%, transparent 77%, transparent);
 }
 
 .tripInformation #trainInformation {
     position: fixed;
     width: 100%;
-    height: calc(65% + 25px);
+    height: calc(var(--px50) * 2 + var(--stationBoxHeight));
     max-width: 500px;
     bottom: 0;
-    background-color: hsla(240, 12%, 15%, 0.75);
+    background-color: hsla(240, 12%, 25%, 0.25);
 
-    border-top-left-radius: 25px;
-    border-top-right-radius: 25px;
 
-    box-shadow: 0px 0px 20px 10px rgba(0,0,0,.5);
+    box-shadow: 0px 0px 20px 10px rgba(0,0,0,.25);
     backdrop-filter: blur(40px);
     -webkit-backdrop-filter: blur(40px);
     z-index: 999;
 }
 
+.tripInformation #backButton {
+    position: absolute;
+    border: none;
+    bottom: var(--px50);
+    left: calc(50% - var(--px100));
+    height: var(--stationBoxHeight);
+    width: var(--px200);
+    text-align: center;
+    font-weight: 700;
+    font-size: var(--px16);
+    border-radius: var(--switchDirButtonHeight);
+    z-index: 999;
+}
+
+.tripInfoScrollBox {
+    position: absolute;
+    bottom: calc(var(--px50) * 2 +  var(--stationBoxHeight));
+    width: 100%;
+    height: calc(100% - var(--px50) * 2 - var(--stationBoxHeight) - var(--px88) - var(--px10));
+    overflow-y: scroll;
+    mask-image: linear-gradient(180deg, rgba(0,0,0,0) 0, rgba(0,0,0,.4) var(--px25), rgba(0,0,0,1) var(--stopWidth));
+}
+
+.tripInfoScrollBox .error {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    height: var(--px40);
+    line-height: var(--px40);
+    font-size: var(--px25);
+    font-weight: 700;
+    color: rgba(245, 245, 245, .6);
+    top: calc(50% - var(--px20))
+}
+
+.tripPath {
+    position: relative;
+    width: 100%;
+    height: auto;
+    overflow-y: hidden;
+    margin-top: var(--px35);
+}
+
+.tripPath .stop {
+    position: relative;
+    width: calc(100% - var(--scheduleTitlePaddingLeft) * 2);
+    left: var(--scheduleTitlePaddingLeft);
+    height: var(--stopWidth);
+}
+
+.tripPath .stop .infillTime {
+    position: absolute;
+    
+    text-align: right;
+    font-style: italic;
+    font-weight: 500;
+    font-size: var(--px15);
+    color: rgba(245, 245, 245, .6);
+
+    width: var(--px68);
+    height: var(--stopWidth);
+    line-height: var(--stopWidth);
+    -webkit-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+.tripPath .stop .infillTime strong {
+    font-weight: 600;
+    font-size: var(--px10);
+    -webkit-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+.tripPath .stop .originTime strong {
+    font-weight: 700;
+    font-size: var(--px12);
+    -webkit-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+.tripPath .stop .originTime {
+    position: absolute;
+    
+    text-align: right;
+    font-style: italic;
+    font-weight: 600;
+    font-size: var(--px18);
+    color: rgba(245, 245, 245, .85);
+
+    width: var(--px68);
+    height: var(--stopWidth);
+    line-height: var(--stopWidth);
+    -webkit-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+
+.tripPath .stop .stopName {
+    position: absolute;
+    
+    left: calc(var(--stopWidth) + var(--px80));
+    font-weight: 500;
+    font-size: var(--px16);
+    color: rgba(245, 245, 245, .6);
+
+    width: auto;
+    height: var(--stopWidth);
+    line-height: var(--stopWidth);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    -webkit-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+.tripPath .stop .bold {    
+    font-weight: 600;
+    font-size: var(--px18);
+    color: rgba(245, 245, 245, .85);
+}
+
+.tripPath .stop .origin{
+    position: absolute;
+    width: var(--stopWidth);
+    height: var(--stopWidth);
+    left: var(--px75);
+    border-radius: calc(var(--px35) / 2);
+}
+
+.tripPath .stop .origin .line {
+    position: absolute;
+    background-color: var(--scheduleLineColor);
+    width: var(--stopLineWidth);
+    height: calc(var(--stopWidth) / 2);
+    top: calc(var(--stopWidth) / 2);
+    left: calc(var(--stopWidth) / 2 - var(--stopLineWidth) / 2);
+}
+
+.tripPath .stop .origin .dot {
+    position: absolute;
+    background-color: hsl(129, 55%, 80%);
+    width: calc(var(--dotWidth));
+    height: calc(var(--dotWidth));
+    left: calc(var(--stopWidth) / 2 - var(--dotWidth) / 2 - var(--px3));
+    top: calc(var(--stopWidth) / 2 - var(--dotWidth) / 2 - var(--px3));
+    border-radius: calc(var(--stopWidth) / 2);
+    border-color: hsl(270, 20%, 25%);
+    border-width: var(--px3);
+    border-style: solid;
+    box-shadow: 0 0 0 var(--px3) var(--scheduleLineColor);
+}
+
+.tripPath .stop .infill{
+    position: absolute;
+    width: var(--stopWidth);
+    height: var(--stopWidth);
+    left: var(--px75);
+    border-radius: calc(var(--px35) / 2);
+}
+
+.tripPath .stop .infill .line {
+    position: absolute;
+    background-color: var(--scheduleLineColor);
+    width: var(--stopLineWidth);
+    height: var(--stopWidth);
+    left: calc(var(--stopWidth) / 2 - var(--stopLineWidth) / 2);
+}
+
+.tripPath .stop .infill .dot {
+    position: absolute;
+    background-color: hsl(270, 20%, 25%);
+    width: calc(var(--px12));
+    height: calc(var(--px12));
+    left: calc(var(--stopWidth) / 2 - var(--px12) / 2 - var(--px3));
+    top: calc(var(--stopWidth) / 2 - var(--px12) / 2 - var(--px3));
+    border-radius: calc(var(--stopWidth) / 2);
+    border-color: var(--scheduleLineColor);
+    border-width: var(--px3);
+    border-style: solid;
+}
+
+.tripPath .stop .terminus {
+    position: absolute;
+    width: var(--stopWidth);
+    height: var(--stopWidth);
+    left: var(--px75);
+    border-radius: calc(var(--px35) / 2);
+}
+
+.tripPath .stop .terminus .dot {
+    position: absolute;
+    background-color: hsl(0, 100%, 83%);
+    width: calc(var(--dotWidth));
+    height: calc(var(--dotWidth));
+    left: calc(var(--stopWidth) / 2 - var(--dotWidth) / 2 - var(--px3));
+    top: calc(var(--stopWidth) / 2 - var(--dotWidth) / 2 - var(--px3));
+    border-radius: calc(var(--stopWidth) / 2);
+    border-color: hsl(270, 20%, 25%);
+    border-width: var(--px3);
+    border-style: solid;
+    box-shadow: 0 0 0 var(--px3) var(--scheduleLineColor);
+}
+
+.tripPath .stop .terminus .line {
+    position: absolute;
+    background-color: var(--scheduleLineColor);
+    width: var(--stopLineWidth);
+    height: calc(var(--stopWidth) / 2);
+    left: calc(var(--stopWidth) / 2 - var(--stopLineWidth) / 2);
+}
+
+.scheduleTitle strong {
+    color: rgba(255, 255, 255, .25);
+    font-weight: 300;
+}
+
+.tripRoute {
+    font-size: var(--px18);
+    font-weight: 600;
+    left: var(--px5);
+    color: hsl(270, 100%, 87%);
+    padding-left: var(--scheduleTitlePaddingLeft);
+}
+
+.tripHeadsign {
+    font-size: var(--px18);
+    font-weight: 700;
+    padding-left: var(--scheduleTitlePaddingLeft);
+}
+
+.tripPrediction {
+    font-size: var(--px18);
+    font-weight: 700;
+    padding-left: var(--scheduleTitlePaddingLeft);
+}
+
 .devInfo {
     position: absolute;
     bottom: 0;
-    width: 100%;
+    width: 50%;
     height: auto;
-    padding-top: 25px;
-    padding-bottom: 25px;
+    padding-top: var(--px25);
+    padding-bottom: var(--px25);
+    margin-left: var(--px25);
 }
 
 .devInfo p {
     width: 100%;
-    height: 25px;
-    line-height: 25px;
-    text-align: center;
+    height: var(--px25);
+    line-height: var(--px25);
+    text-align: left;
     color: var(--scheduleText);
     -webkit-user-select: text;
     -ms-user-select: text;
@@ -945,7 +1207,7 @@ body {
     top: calc(var(--px35) / 4);
 }
 
-.info #line {
+.info .line {
     position: relative;
     width: calc(100% - var(--px15));
     height: var(--px35);
@@ -960,7 +1222,7 @@ body {
     overflow: hidden;
 }
 
-.info #text {
+.info .text {
     position: relative;
     width: calc(100% - var(--px15) * 2);
     line-height: var(--px20);

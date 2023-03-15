@@ -48,6 +48,7 @@ local function request(path, query, cacheTime)
         query = 'api_key=' .. key .. '&' .. query,
         authority = 'api-v3.mbta.com'
     }
+    --print(uri.host .. uri.path .. '?' .. uri.query)
 
     local uriString = 'https://api-v3.mbta.com/' 
         .. path
@@ -86,7 +87,9 @@ local mbta = {
 function mbta.cache(self)
     if self.cacheExpires > os.time() then return end --dont cache if not expired
 
+    print('Getting CR stops...')
     self.stops = request('stops', 'sort=name&filter[route_type]=2')
+    print('Getting CR routes...')
     self.routes = request('routes', 'filter[type]=2')
 
     self.stopNames = {} --Clear all stop names
@@ -110,6 +113,16 @@ function mbta.nameToId(self, name)
     for _, stop in pairs(self.stops) do --Iterate through ids/names and check for match
         if stop.attributes.name:lower() == name then 
             return stop.id, stop.attributes.name --return ID and normalized name
+        end
+    end
+end
+
+function mbta.idToName(self, id)
+    id = id:lower() --lower for matching
+
+    for _, stop in pairs(self.stops) do --Iterate through ids/names and check for match
+        if stop.id:lower() == id then 
+            return stop.attributes.name 
         end
     end
 end
@@ -153,6 +166,59 @@ function mbta.getFare(self, toId, fromId)
     end
 end
 
+function mbta.getTripInfo(self, carrier, id, to, from)
+    print(to, from)
+    local tripSchedules = request('schedules', --get full path for train selected
+        'sort=time&filter[trip]=' .. tostring(id))
+
+    local tripInfo = {
+        path = {} --contains tables containing stop ID and time
+    }
+
+    to = self:nameToId(to)
+    from = self:nameToId(from)
+
+    local tripStarted = false
+    for stop, schedule in pairs(tripSchedules) do
+        local id = schedule.relationships.stop.data.id
+
+        if not tripStarted then
+            print(id, from)
+            if id == from then
+                tripStarted = true
+            end
+        end
+
+        --headsign may not be on all stops, find first stop w/ headsign and assign
+        local headsign = schedule.attributes.stop_headsign
+        if not tripInfo.headsign and headsign then tripInfo.headsign = headsign end
+
+        if tripStarted then
+            local pathStop = {
+                name = self:idToName(id)
+            }
+
+            local departureTime = schedule.attributes.departure_time
+
+            if not departureTime then --time of the stop
+                pathStop.time = schedule.attributes.arrival_time
+            else
+                pathStop.time = departureTime
+            end
+
+
+            table.insert(tripInfo.path, pathStop)
+            if id == to then
+                tripStarted = false
+
+                if not tripInfo.headsign then tripInfo.headsign = 'No headsign' end
+
+                return tripInfo
+            end
+        end
+    end
+end
+
 function mbta.request(self, from, to, date)
     self:cache() --recache if needed
 
@@ -176,7 +242,7 @@ function mbta.request(self, from, to, date)
             local correspondingSchedule = possibleTripSchedules[id]
             if correspondingSchedule then
                 if schedule.relationships.stop.data.id == to and schedule.attributes.stop_sequence > correspondingSchedule.attributes.stop_sequence then
-                    predictionTripIds = predictionTripIds .. id .. ','
+                    predictionTripIds =  predictionTripIds .. id .. ','
 
                     local direction, route =
                         self:getDirectionAndRouteNames(correspondingSchedule.relationships.route.data.id,
@@ -206,6 +272,7 @@ function mbta.request(self, from, to, date)
                 possibleTripSchedules[id] = schedule 
             end
         end
+        
 
         if os.date("%Y-%m-%d") == date then --if today get predictions
             local predictions = request(

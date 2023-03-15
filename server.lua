@@ -19,7 +19,9 @@ local api = require('modules/apihandler')
 
 --/UI/--------------------------------------------------------------------------
 local serverPath = 'main'
+local port = 443 --if staging change port
 if arg[1] == '-s' then
+    port = 3000
     serverPath = 'staging'
 end
 
@@ -64,7 +66,7 @@ local allowedPaths = {
     ['/robots.txt'] = {path = 'robots.txt', mime = 'text/plain'},
 
     --Images
-    ['/favicon.ico'] = {path = 'favicon.ico', mime = 'image/x-icon'},
+    ['/favicon.ico'] = {path = 'images/favicon.ico', mime = 'image/x-icon'},
     ['/images/swap.svg'] = {path = 'images/swap.svg', mime = 'image/svg+xml'},
     ['/images/calendar.svg'] = {path = 'images/calendar.svg', mime = 'image/svg+xml'},
     ['/images/alert.svg'] = {path = 'images/alert.svg', mime = 'image/svg+xml'},
@@ -80,13 +82,14 @@ local function onStream(server, stream)
             local newHeaders = httpHeaders.new()
             newHeaders:append(":status", "301")
             newHeaders:append(
-                "Location", 'https://' .. 
-                headers:get(':authority') ..
-                headers:get(':path')
+                "Location", 'https://purpletrain.net:' .. tostring(port) .. '/'
             )
-
             stream:write_headers(newHeaders, false)
-            stream:write_body_from_string(data)
+
+            pcall(function() --in case of query
+                stream:write_body_from_string(data)
+            end)
+            
             return
         end
 
@@ -110,9 +113,18 @@ local function onStream(server, stream)
         end
 
         if method == 'POST' then
+            local body = json.decode(stream:get_body_as_string())
+
+            if not body then return end
+
             if url.path == '/getTrainTime' then
-                local body = json.decode(stream:get_body_as_string())
                 send(stream, json.encode(api:getTrainTimes(body.from, body.to, body.date, body.includeDeparted)), 'application/json', method)
+            elseif url.path == '/getTripInfo' then
+                local tripInfo = json.encode(api:getTripInfo(body.carrier, body.id, body.to, body.from))
+
+                if tripInfo and tripInfo ~= 'null' then
+                    send(stream, tripInfo, 'application/json', method)
+                end
             end
         end
     end
@@ -136,11 +148,6 @@ local interface = 'enp2s0' --get local IP from this interface
 local ipWithSubnet = io.popen("ip -4 -o address show dev " .. interface .. " | awk '{print $4}'")
 local ip = string.match(ipWithSubnet:read("*a"), '(.-)/')
 ipWithSubnet:close()
-
-local port = 443 --if staging change port
-if serverPath == 'staging' then
-    port = 3000
-end
 
 
 local server = assert(httpServer.listen({
