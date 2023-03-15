@@ -1023,7 +1023,7 @@ body {
 
 .tripPath .stop .origin .dot {
     position: absolute;
-    background-color: hsl(129, 55%, 80%);
+    background-color: hsl(128.8, 50%, 70%);
     width: calc(var(--dotWidth));
     height: calc(var(--dotWidth));
     left: calc(var(--stopWidth) / 2 - var(--dotWidth) / 2 - var(--px3));
@@ -1074,7 +1074,7 @@ body {
 
 .tripPath .stop .terminus .dot {
     position: absolute;
-    background-color: hsl(0, 100%, 83%);
+    background-color: hsl(0, 90%, 70.4%);
     width: calc(var(--dotWidth));
     height: calc(var(--dotWidth));
     left: calc(var(--stopWidth) / 2 - var(--dotWidth) / 2 - var(--px3));
