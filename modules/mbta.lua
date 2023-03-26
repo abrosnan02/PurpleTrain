@@ -35,7 +35,6 @@ local fares = {
         [9] = '6.75',
         [10] = '7.25',
     },
-
 }
 
 
@@ -190,7 +189,7 @@ end
 
 function mbta.getTripInfo(self, carrier, id, to, from)
     local tripSchedules = request('schedules', --get full path for train selected
-        'sort=time&filter[trip]=' .. tostring(id))
+        'sort=time&filter[trip]=' .. tostring(id), )
     
     local tripInfo = {
         path = {} --contains tables containing stop ID and time

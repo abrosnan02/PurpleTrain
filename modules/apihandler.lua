@@ -168,7 +168,7 @@ function api.getTripInfo(self, carrier, id, to, from)
 
         return tripInfo
     else
-        return {error = 'No data for ' .. carrier}
+        return {error = 'No data for ' .. carrier .. ' :('}
     end
 end
 
