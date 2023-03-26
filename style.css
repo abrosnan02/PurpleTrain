@@ -935,7 +935,7 @@ body {
     font-style: italic;
     font-weight: 500;
     font-size: var(--px15);
-    color: rgba(245, 245, 245, .6);
+    color: rgba(245, 245, 245, .55);
 
     width: var(--px68);
     height: var(--stopWidth);
@@ -985,7 +985,7 @@ body {
     left: calc(var(--stopWidth) + var(--px80));
     font-weight: 500;
     font-size: var(--px16);
-    color: rgba(245, 245, 245, .6);
+    color: rgba(245, 245, 245, .55);
 
     width: auto;
     height: var(--stopWidth);
@@ -1004,7 +1004,7 @@ body {
     color: rgba(245, 245, 245, .85);
 }
 
-.tripPath .stop .origin{
+.tripPath .stop .origin {
     position: absolute;
     width: var(--stopWidth);
     height: var(--stopWidth);

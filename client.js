@@ -251,13 +251,11 @@ function closeCalendar() {
 }
 
 function getTripInfo(carrier, id, to, from) {
+  console.log(id)
   var tripInfoScrollBox = document.getElementById("tripInfoScrollBox")
   tripInfoScrollBox.textContent = ''
 
   tripInformation.style.visibility = 'initial'
-
-  
-  
 
   var loader = document.createElement('div')
   loader.classList.add("loader")

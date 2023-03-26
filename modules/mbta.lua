@@ -56,6 +56,7 @@ local function request(path, query, cacheTime)
         .. '&' .. query --for some reason http doesn't like the string
     
     local body = cache:get(uriString)
+
     if not body then
         local request = httpRequest.new_from_uri(uri)
         request.headers:upsert(":method", "GET")
@@ -65,10 +66,16 @@ local function request(path, query, cacheTime)
     end
     
     if body then --returns decoded body or nil
-        cache:set(uriString, body, cacheTime or cache.cacheTime)
-        local data = json.decode(body).data
+        local decodedBody = json.decode(body)
 
-        return data
+        if decodedBody.data then
+            local data = json.decode(body).data
+
+            cache:set(uriString, body, cacheTime or cache.cacheTime)
+            return data
+        elseif decodedBody.error then
+            print(decodedBody.error)
+        end
     end
 end
 
@@ -78,7 +85,9 @@ local mbta = {
     name = 'MBTA',
     routes = {}, --All CR stops
     stops = {}, --All CR route names
-    stopNames = {}, --Array of stop names and/or cities for autocomplete]]
+    subwayStops = {}, --All subway stops
+    connections = {}, --CR IDs as keys, subway connections for each stop
+    stopNames = {}, --Array of stop names and/or cities for autocomplete
 
     cacheExpires = 0
 }
@@ -87,14 +96,19 @@ local mbta = {
 function mbta.cache(self)
     if self.cacheExpires > os.time() then return end --dont cache if not expired
 
-    print('Getting CR stops...')
-    self.stops = request('stops', 'sort=name&filter[route_type]=2')
     print('Getting CR routes...')
     self.routes = request('routes', 'filter[type]=2')
+    print('Getting CR stops...')
+    self.stops = request('stops', 'sort=name&filter[route_type]=2')
+    --print('Getting subway stops...')
+    --self.subwayStops = request('stops', 'sort=name&filter[route_type]=0,1')
 
     self.stopNames = {} --Clear all stop names
-
+    
+    local placeNames = '' --string of place names for route request
     for _, stop in pairs(self.stops) do --insert name strings for autocomplete
+        placeNames = placeNames .. stop.relationships.parent_station.data.id .. ','
+
         local name = stop.attributes.name
         local municipality = stop.attributes.municipality
         if name ~= municipality then --include city name if not same as station name
@@ -103,6 +117,14 @@ function mbta.cache(self)
             table.insert(self.stopNames, {name = name})
         end
     end
+    
+    --[[for _, stop in pairs(self.stops) do
+        for _, subwayStop in pairs(self.subwayStops) do
+            if subwayStop.relationships.parent_station.data.id == stop.relationships.parent_station.data.id then
+                print(stop.attributes.name, subwayStop.attributes.platform_name)
+            end
+        end
+    end]]
 
     self.cacheExpires = os.time() + 3600
 end
@@ -167,10 +189,9 @@ function mbta.getFare(self, toId, fromId)
 end
 
 function mbta.getTripInfo(self, carrier, id, to, from)
-    print(to, from)
     local tripSchedules = request('schedules', --get full path for train selected
         'sort=time&filter[trip]=' .. tostring(id))
-
+    
     local tripInfo = {
         path = {} --contains tables containing stop ID and time
     }
@@ -183,7 +204,6 @@ function mbta.getTripInfo(self, carrier, id, to, from)
         local id = schedule.relationships.stop.data.id
 
         if not tripStarted then
-            print(id, from)
             if id == from then
                 tripStarted = true
             end
@@ -271,8 +291,7 @@ function mbta.request(self, from, to, date)
             else --1. insert a possible trip schedule
                 possibleTripSchedules[id] = schedule 
             end
-        end
-        
+        end        
 
         if os.date("%Y-%m-%d") == date then --if today get predictions
             local predictions = request(
@@ -289,6 +308,7 @@ function mbta.request(self, from, to, date)
                         if prediction.relationships.stop.data.id == trips[index].from then
                             --if prediction then set predictedTime
                             predictedTime = prediction.attributes.departure_time
+                            print(predictedTime)
                             break
                         end
                         if prediction.attributes.stop_sequence > trips[index].stopSequence then

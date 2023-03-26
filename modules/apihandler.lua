@@ -87,7 +87,6 @@ local function normalizeTrip(trip)
     trip.wait = trip.predictedTime - os.time()
 
     --if trip is over 1/2 hour away dont show predictions <= 5 min
-    print(1, trip.prediction)
     if trip.wait >= 1800 and trip.prediction <= 300 then
         trip.prediction = 0
         
@@ -95,11 +94,9 @@ local function normalizeTrip(trip)
     elseif not trip.prediction then --just in case
         trip.prediction = 0
     end
-    print(2, trip.prediction)
-    trip.prediction = 0
+
     trip.scheduledTime = nil --remove if present
     trip.stopSequence = nil
-
 
     return trip
 end
@@ -162,7 +159,7 @@ function api.getTripInfo(self, carrier, id, to, from)
     if carrierModule.getTripInfo then
         local tripInfo = carrierModule:getTripInfo(carrier, id, to, from)
 
-        if not tripInfo then return {error = 'An error occurred'} end
+        if not tripInfo then return {error = 'No data for this trip'} end
 
         for _, stop in pairs(tripInfo.path) do
             stop.time = dateTimeTo12Hour(convertTimeStamp(stop.time))
