@@ -81,16 +81,23 @@ local function onStream(server, stream)
             print('HTTPS Redirection')
             local newHeaders = httpHeaders.new()
             newHeaders:append(":status", "200")
-            newHeaders:append(
+            --[[newHeaders:append(
                 "Location", 'https://purpletrain.net:' .. tostring(port) .. '/'
-            )
+            )]]
             stream:write_headers(newHeaders, false)
 
+            print(headers:get(':path'))
             pcall(function() --in case of query
                 stream:write_body_from_string([[
-                    <meta http-equiv="refresh" content="0; url=]] .. 
-                    'https://purpletrain.net:' .. tostring(port) .. '/'
-                    .. [[" />
+                    <!DOCTYPE html>
+
+                    <html lang="en">
+                        <head>
+                            <meta http-equiv="refresh" content="0; url=]] .. 
+                            'https://purpletrain.net:' .. tostring(port) .. '/'
+                            .. [[" />
+                        </head>
+                    </html>
                 ]])
             end)
             
