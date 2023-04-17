@@ -67,13 +67,19 @@ local function request(path, query, cacheTime)
     if body then --returns decoded body or nil
         local decodedBody = json.decode(body)
 
-        if decodedBody.data then
-            local data = json.decode(body).data
+        local data = decodedBody.data
+        local errors = decodedBody.errors
 
+        if data then
             cache:set(uriString, body, cacheTime or cache.cacheTime)
-            return data
-        elseif decodedBody.error then
-            print(decodedBody.error)
+            return data, decodedBody.included
+        elseif errors then
+            for _, message in pairs(errors) do
+                print('-------------------')
+                print('ERROR: ' .. tostring(message.code))
+                print(message.detail)
+                print('-------------------')
+            end
         end
     end
 end
@@ -189,7 +195,7 @@ end
 
 function mbta.getTripInfo(self, carrier, id, to, from)
     local tripSchedules = request('schedules', --get full path for train selected
-        'sort=time&filter[trip]=' .. tostring(id), )
+        'sort=time&filter[trip]=' .. tostring(id), 15)
     
     local tripInfo = {
         path = {} --contains tables containing stop ID and time
@@ -225,13 +231,14 @@ function mbta.getTripInfo(self, carrier, id, to, from)
                 pathStop.time = departureTime
             end
 
+            if schedule.attributes.drop_off_type == 3 then
+                pathStop.flagStop = true
+            end
+
 
             table.insert(tripInfo.path, pathStop)
             if id == to then
                 tripStarted = false
-
-                if not tripInfo.headsign then tripInfo.headsign = 'No headsign' end
-
                 return tripInfo
             end
         end

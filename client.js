@@ -1,3 +1,11 @@
+const virtualKeyboardSupported = "virtualKeyboard" in navigator;
+
+console.log(virtualKeyboardSupported)
+
+if (virtualKeyboardSupported) {
+  navigator.virtualKeyboard.overlaysContent = true;
+}
+
 window.onload = function () {
   bottomBox = document.getElementById("bottomBox")
   toFromBox = document.getElementById("toFromBox")
@@ -280,12 +288,14 @@ function getTripInfo(carrier, id, to, from) {
       var tripPath = document.createElement('div')
       tripPath.classList.add('tripPath')
 
+      var filler = document.createElement('div')
+      filler.style.width = 'auto'
+      filler.style.height = 'var(--px35)'
+      tripInfoScrollBox.appendChild(filler)
       
 
-      if (tripInfo.headsign) {
-        //document.getElementById('tripHeadsign').textContent = tripInfo.headsign
-        console.log(tripInfo.headsign)
-      }
+      
+
       if (tripInfo.path) {
         var stops = tripInfo.path.length
         for (var i = 0; i < stops; i++) {
@@ -300,6 +310,7 @@ function getTripInfo(carrier, id, to, from) {
           var stopName = document.createElement('p')
           stopName.textContent = tripInfo.path[i].name
           stopName.classList.add("stopName")
+          console.log(tripInfo.path[i].drop_off_type)
 
           var dotBox = document.createElement('div')
           var dot = document.createElement('div')
@@ -312,9 +323,9 @@ function getTripInfo(carrier, id, to, from) {
           if (i == 0 || i == stops - 1) {
             time.classList.add("originTime")
             stopName.classList.add("bold")
+
             if (i == stops - 1) {
               dotBox.classList.add("terminus")
-              stop.style.marginBottom = 'var(--stopWidth)'
             } else {
               dotBox.classList.add("origin")
             }
@@ -328,8 +339,27 @@ function getTripInfo(carrier, id, to, from) {
           stop.appendChild(dotBox)
           tripPath.appendChild(stop)
         }
+        
+        var devInfo = document.createElement('div')
+        devInfo.classList.add("devInfo")
+
+        var tripId = document.createElement('div')
+        tripId.classList.add("tripId")
+        tripId.innerHTML = '<strong>Trip ID: </strong><text class="text">' + id + '</text>'
 
         tripInfoScrollBox.appendChild(tripPath)
+
+        if (tripInfo.headsign) {
+          var headsign = document.createElement('div')
+          headsign.classList.add("tripHeadsign")
+          headsign.textContent = tripInfo.headsign
+  
+          tripInfoScrollBox.appendChild(headsign)
+        }
+
+        devInfo.appendChild(tripId)
+        tripInfoScrollBox.appendChild(devInfo)
+        
       } else if (tripInfo.error) {
         var error = document.createElement('p')
         error.textContent = tripInfo.error
@@ -538,8 +568,12 @@ function updateButtons() {
 function autocomplete(button) {
   if (searching) {return}
   if (stops.length == 0) {return}
+  
   var searchBox = document.createElement('div')
   searchBox.classList.add("searchBox")
+  if (virtualKeyboardSupported) {
+    searchBox.classList.add("virtualKeyboard")
+  }
 
   var searchInput = document.createElement('textArea')
   searchInput.classList.add("searchInput")
@@ -575,7 +609,7 @@ function autocomplete(button) {
     this.value = this.value.trimStart().replace(/(\r\n|\n|\r)/gm, "");
     var value = this.value.toLowerCase();
     var currentResult = 0
-    var resultAmount = Math.floor((window.innerHeight - 30) / 60) - 1
+    var resultAmount = Math.floor((searchBox.clientHeight - 30) / 60) - 1
     var arrayLength = stops.length;
     var valueLength = value.length;
 

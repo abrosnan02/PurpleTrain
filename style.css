@@ -253,7 +253,7 @@ body {
     height: var(--pc60);
     left: 2.5%;
     top: calc(10px + var(--stationBoxHeight) * 2);
-    border-radius: 12px;
+    border-radius: var(--px12);
     table-layout: fixed;
     background-color: hsla(240, 33%, 3%, 0.25);
     white-space: nowrap;
@@ -459,6 +459,11 @@ body {
     background-color: rgba(0, 0, 0, .65);
     -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
+}
+
+.searchBox .virtualKeyboard{
+    height: calc(100% - env(keyboard-inset-height));
+    background-color: #80276C;
 }
 
 .searchInput {
@@ -918,7 +923,6 @@ body {
     width: 100%;
     height: auto;
     overflow-y: hidden;
-    margin-top: var(--px35);
 }
 
 .tripPath .stop {
@@ -997,6 +1001,7 @@ body {
     -ms-user-select: text;
     user-select: text;
 }
+
 
 .tripPath .stop .bold {    
     font-weight: 600;
@@ -1108,9 +1113,17 @@ body {
 }
 
 .tripHeadsign {
-    font-size: var(--px18);
-    font-weight: 700;
+    margin-left: var(--px5);
+    margin-bottom: var(--px5);
+    font-size: var(--px20);
+    font-weight: 600;
+    width: calc(100% - var(--scheduleTitlePaddingLeft) * 2);
+    color: rgba(255, 255, 255, .75);
     padding-left: var(--scheduleTitlePaddingLeft);
+    background-color: var(--buttonColor);
+    padding-top: var(--px5);
+    padding-bottom: var(--px5);
+    border-radius: var(--px20);
 }
 
 .tripPrediction {
@@ -1120,21 +1133,23 @@ body {
 }
 
 .devInfo {
-    position: absolute;
-    bottom: 0;
     width: 50%;
     height: auto;
-    padding-top: var(--px25);
-    padding-bottom: var(--px25);
-    margin-left: var(--px25);
+    margin-left: 25%;
+    text-align: center;
+    margin-bottom: var(--px50);
+    margin-top: var(--px50);
+    color: rgba(245, 245, 245, .15);
 }
 
 .devInfo p {
     width: 100%;
     height: var(--px25);
     line-height: var(--px25);
-    text-align: left;
-    color: var(--scheduleText);
+    
+}
+
+.text {
     -webkit-user-select: text;
     -ms-user-select: text;
     user-select: text;
