@@ -1,6 +1,6 @@
 --[[
     PurpleTrain HTTP Server
-    Anthony Brosnan, January 2023
+    Anthony Brosnan, January 2023 - April 2023
 ]]--
 
 --/Main Variables/--------------------------------------------------------------
@@ -77,33 +77,6 @@ local function onStream(server, stream)
     local headers = stream:get_headers()
     
     if headers then
-        if tostring(headers:get(':scheme')) == 'http' then --HTTPS redirection
-            print('HTTPS Redirection')
-            local newHeaders = httpHeaders.new()
-            newHeaders:append(":status", "200")
-            --[[newHeaders:append(
-                "Location", 'https://purpletrain.net:' .. tostring(port) .. '/'
-            )]]
-            stream:write_headers(newHeaders, false)
-
-            print(headers:get(':path'))
-            pcall(function() --in case of query
-                stream:write_body_from_string([[
-                    <!DOCTYPE html>
-
-                    <html lang="en">
-                        <head>
-                            <meta http-equiv="refresh" content="0; url=]] .. 
-                            'https://purpletrain.net:' .. tostring(port) .. '/'
-                            .. [[" />
-                        </head>
-                    </html>
-                ]])
-            end)
-            
-            return
-        end
-
         local path = tostring(headers:get(':path'))
         local method = tostring(headers:get(':method'))
         local url = netUrl.parse('https://purpletrain.net' .. path)
@@ -160,11 +133,10 @@ local ipWithSubnet = io.popen("ip -4 -o address show dev " .. interface .. " | a
 local ip = string.match(ipWithSubnet:read("*a"), '(.-)/')
 ipWithSubnet:close()
 
-
 local server = assert(httpServer.listen({
     host = ip,
     port = port,
-    tls = nil,
+    tls = true,
     ctx = context,
     onstream = onStream
 }))
