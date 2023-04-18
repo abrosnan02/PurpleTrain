@@ -1133,13 +1133,16 @@ body {
 }
 
 .devInfo {
-    width: 50%;
+    width: 85%;
+    margin-left: 7.5%;
     height: auto;
-    margin-left: 25%;
     text-align: center;
-    margin-bottom: var(--px50);
-    margin-top: var(--px50);
-    color: rgba(245, 245, 245, .15);
+    margin-bottom: var(--px35);
+    margin-top: var(--px35);
+    color: var(--white);
+    opacity: .85;
+    font-size: var(--px22);
+    font-weight: 700;
 }
 
 .devInfo p {

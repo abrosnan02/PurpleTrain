@@ -3,7 +3,7 @@ const virtualKeyboardSupported = "virtualKeyboard" in navigator;
 console.log(virtualKeyboardSupported)
 
 if (virtualKeyboardSupported) {
-  navigator.virtualKeyboard.overlaysContent = true;
+  //navigator.virtualKeyboard.overlaysContent = true;
 }
 
 window.onload = function () {
@@ -259,7 +259,6 @@ function closeCalendar() {
 }
 
 function getTripInfo(carrier, id, to, from) {
-  console.log(id)
   var tripInfoScrollBox = document.getElementById("tripInfoScrollBox")
   tripInfoScrollBox.textContent = ''
 
@@ -310,7 +309,6 @@ function getTripInfo(carrier, id, to, from) {
           var stopName = document.createElement('p')
           stopName.textContent = tripInfo.path[i].name
           stopName.classList.add("stopName")
-          console.log(tripInfo.path[i].drop_off_type)
 
           var dotBox = document.createElement('div')
           var dot = document.createElement('div')
@@ -345,21 +343,25 @@ function getTripInfo(carrier, id, to, from) {
 
         var tripId = document.createElement('div')
         tripId.classList.add("tripId")
-        tripId.innerHTML = '<strong>Trip ID: </strong><text class="text">' + id + '</text>'
+        tripId.textContent =  ''
 
         tripInfoScrollBox.appendChild(tripPath)
 
         if (tripInfo.headsign) {
-          var headsign = document.createElement('div')
-          headsign.classList.add("tripHeadsign")
-          headsign.textContent = tripInfo.headsign
-  
-          tripInfoScrollBox.appendChild(headsign)
+          var tripHeadsign = document.createElement('div')
+          tripHeadsign.classList.add("tripId")
+          tripHeadsign.textContent = tripInfo.headsign
+          devInfo.appendChild(tripHeadsign)
+        }
+
+        if (tripInfo.scheduleId) {
+          console.log('Schedule ID: ' + tripInfo.scheduleId)
         }
 
         devInfo.appendChild(tripId)
         tripInfoScrollBox.appendChild(devInfo)
-        
+
+        console.log('Trip ID: ' + id)
       } else if (tripInfo.error) {
         var error = document.createElement('p')
         error.textContent = tripInfo.error
@@ -572,7 +574,7 @@ function autocomplete(button) {
   var searchBox = document.createElement('div')
   searchBox.classList.add("searchBox")
   if (virtualKeyboardSupported) {
-    searchBox.classList.add("virtualKeyboard")
+    //searchBox.classList.add("virtualKeyboard")
   }
 
   var searchInput = document.createElement('textArea')

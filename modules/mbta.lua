@@ -204,6 +204,8 @@ function mbta.getTripInfo(self, carrier, id, to, from)
     to = self:nameToId(to)
     from = self:nameToId(from)
 
+    tripInfo.scheduleId = tripSchedules[1].id
+
     local tripStarted = false
     for stop, schedule in pairs(tripSchedules) do
         local id = schedule.relationships.stop.data.id
@@ -216,7 +218,7 @@ function mbta.getTripInfo(self, carrier, id, to, from)
 
         --headsign may not be on all stops, find first stop w/ headsign and assign
         local headsign = schedule.attributes.stop_headsign
-        if not tripInfo.headsign and headsign then tripInfo.headsign = headsign end
+        if not tripInfo.headsign and headsign then tripInfo.headsign = 'To ' .. headsign end
 
         if tripStarted then
             local pathStop = {
@@ -235,8 +237,8 @@ function mbta.getTripInfo(self, carrier, id, to, from)
                 pathStop.flagStop = true
             end
 
-
             table.insert(tripInfo.path, pathStop)
+
             if id == to then
                 tripStarted = false
                 return tripInfo
@@ -274,11 +276,12 @@ function mbta.request(self, from, to, date)
                         self:getDirectionAndRouteNames(correspondingSchedule.relationships.route.data.id,
                         correspondingSchedule.attributes.direction_id)
 
+                    local number = string.match(id, '(%w+-%d+)-%d+')
                     local trip = { --assign information
                         carrier = self.name,
                         id = id,
                         route = route,
-                        number = tonumber(string.match(id, '%w+$')),
+                        number = tonumber(string.match(id, '%w+$')) or string.match(id, '(%d+)-(%w+)$'), --in case of event schedules
                         direction = direction,
                         fare = '$' .. 
                             tostring(self:getFare(schedule.relationships.stop.data.id,
