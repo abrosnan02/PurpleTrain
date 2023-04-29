@@ -97,6 +97,27 @@ Date.prototype.yyyymmdd = function() { //stackoverflow
          ].join('-');
 };
 
+function message(type, title, message) {
+  var info = document.createElement('div')
+  info.classList.add(type)
+
+  var img = document.createElement('img')
+  img.src = '/images/' + type + '.svg'
+
+  var line = document.createElement('p')
+  line.classList.add("line")
+  line.textContent = title
+
+  var text = document.createElement('p')
+  text.classList.add("text")
+  text.textContent = message
+
+  info.appendChild(img)
+  info.appendChild(line)
+  info.appendChild(text)
+  schedules.appendChild(info)
+}
+
 var searching = false
 function disableButtons(opacity) {
   searching = true
@@ -498,23 +519,9 @@ function getTrainTime(date, clearSchedules, addFiller) {
             title.textContent = trainTimes[i].text
             schedules.appendChild(title)
           } else if (trainTimes[i].type == 'info') {
-            var info = document.createElement('div')
-            info.classList.add("info")
-
-            var img = document.createElement('img')
-            img.src = '/images/info.svg'
-            var line = document.createElement('p')
-            line.classList.add("line")
-            line.textContent = trainTimes[i].title
-
-            var text = document.createElement('p')
-            text.classList.add("text")
-            text.textContent = trainTimes[i].text
-
-            info.appendChild(img)
-            info.appendChild(line)
-            info.appendChild(text)
-            schedules.appendChild(info)
+            message('info', trainTimes[i].title, trainTimes[i].text)
+          } else if (trainTimes[i].type == 'alert') {
+              message('alert', trainTimes[i].title, trainTimes[i].text)
           } else if (trainTimes[i].type == 'stations') {
             fromStation = trainTimes[i].names.from
             toStation = trainTimes[i].names.to
@@ -522,7 +529,7 @@ function getTrainTime(date, clearSchedules, addFiller) {
             var filler = document.createElement('div')
           filler.classList.add("filler")
           filler.id = 'filler'
-          filler.textContent = 'No trains past this time'
+          filler.textContent = trainTimes[i].text
           schedules.appendChild(filler)
           }
         }

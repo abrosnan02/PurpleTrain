@@ -13,7 +13,6 @@ local x509 = require('openssl.x509')
 local chain = require('openssl.x509.chain')
 local pkey = require('openssl.pkey')
 local json = require('dkjson')
-local colors = require('ansicolors')
 local api = require('modules/apihandler')
 
 

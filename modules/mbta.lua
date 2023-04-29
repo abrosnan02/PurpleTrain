@@ -4,6 +4,7 @@
 ]]--
 
 --/Main Variables/--------------------------------------------------------------
+local colors = require('ansicolors')
 local httpRequest = require("http.request")
 local json = require('dkjson')
 local cache = require('modules/cache')
@@ -75,10 +76,10 @@ local function request(path, query, cacheTime)
             return data, decodedBody.included
         elseif errors then
             for _, message in pairs(errors) do
-                print('-------------------')
-                print('ERROR: ' .. tostring(message.code))
-                print(message.detail)
-                print('-------------------')
+                print(colors('%{red}-------------------'))
+                print(colors('%{red}ERROR: ' .. tostring(message.code)))
+                print(colors('%{red}' .. message.detail))
+                print(colors('%{red}-------------------'))
             end
         end
     end
@@ -203,7 +204,7 @@ function mbta.getTripInfo(self, carrier, id, to, from)
 
     to = self:nameToId(to)
     from = self:nameToId(from)
-    
+
     if not tripSchedules[1] then return end
     tripInfo.scheduleId = tripSchedules[1].id
 
@@ -306,9 +307,45 @@ function mbta.request(self, from, to, date)
         if os.date("%Y-%m-%d") == date then --if today get predictions
             local predictions = request(
                 'predictions',
-                'sort=time&filter[trip]=' .. predictionTripIds,
+                'sort=time&include=alerts&filter[trip]=' .. predictionTripIds,
                 cache.predictionCacheTime
             )
+        end
+
+        local alerts
+        if #predictionTripIds > 0 then
+            alerts = request(
+                'alerts',
+                'filter[trip]=' .. predictionTripIds,
+                cache.predictionCacheTime
+            )
+        else
+            alerts = request(
+                'alerts',
+                'filter[stop]=' .. from .. ',' .. to,
+                cache.predictionCacheTime
+            )
+        end
+
+        local finalAlerts = {}
+        if alerts then
+            for _, alert in pairs(alerts) do
+                --filter for new and relevant alerts
+                if not alert.attributes.informed_entity then break end
+                
+                local stop
+                for _, entity in pairs(alert.attributes.informed_entity) do
+                    if entity.stop == from or entity.stop == to then --if our stops are affected
+                        stop = true
+                        table.insert(finalAlerts, {type = 'alert', title = string.upper(alert.attributes.service_effect) or 'ALERT', text = alert.attributes.header})
+                    end
+                end
+
+                --if only alerts dont say no more trains
+                --if not stop and #trips > 0 then
+                    --table.insert(finalAlerts, {type = 'alert', title = string.upper(alert.attributes.service_effect) or 'ALERT', text = alert.attributes.header})
+                --end
+            end
         end
 
         if predictions then --if prediction response
@@ -330,8 +367,8 @@ function mbta.request(self, from, to, date)
                 end
             end
         end
-
-        return trips, {from = fromName, to = toName}
+        
+        return trips, finalAlerts, {from = fromName, to = toName}
     end
 end
 

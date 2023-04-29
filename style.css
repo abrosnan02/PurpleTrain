@@ -1180,7 +1180,7 @@ body {
 
 .alert .line {
     position: relative;
-    width: calc(100% - var(--px15));
+    width: calc(100% - var(--px60));
     height: var(--px35);
     line-height: var(--px35);
     font-size: var(--px15);
@@ -1200,7 +1200,7 @@ body {
     font-size: var(--px15);
     padding-left: var(--px15);
     padding-right: var(--px15);
-    padding-bottom: var(--px8);
+    padding-bottom: var(--px12);
     color: var(--white);
     font-weight: 400;
 }
@@ -1227,7 +1227,7 @@ body {
 
 .info .line {
     position: relative;
-    width: calc(100% - var(--px15));
+    width: calc(100% - var(--px60));
     height: var(--px35);
     line-height: var(--px35);
     font-size: var(--px15);

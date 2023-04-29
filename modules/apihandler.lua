@@ -134,13 +134,14 @@ local function finalizeTrip(trip) --make everything human readable
 end
 
 local function getCarrierTrips(from, to, date, carrier)
-    local trips, stationNames = carrier:request(from, to, date)
+    local trips, alerts, stationNames = carrier:request(from, to, date)
+
     if trips then
         for trip = 1, #trips do --normalize trips
             trips[trip] = normalizeTrip(trips[trip])
         end
-
-        return trips, stationNames
+        
+        return trips, alerts, stationNames
     end
 end
 
@@ -179,9 +180,10 @@ function api.getTrainTimes(self, from, to, date, includeDeparted)
     
     local carrierTrips = {} --contains tables of each carrier's trips
     local stationNames
+    local alerts
     for index, carrier in pairs(carriers) do --get trips for each carrier
-        carrierTrips[carrier.name], stations = getCarrierTrips(from, to, date, carrier)
-        if carrier.name == 'MBTA' then stationNames = stations end
+        carrierTrips[carrier.name], finalAlerts, stations = getCarrierTrips(from, to, date, carrier)
+        if carrier.name == 'MBTA' then stationNames = stations alerts = finalAlerts end
     end
 
     local mergedTrips = {}
@@ -215,14 +217,16 @@ function api.getTrainTimes(self, from, to, date, includeDeparted)
         finalizeTrip(finalTrips[index])
     end
     
-    local addFiller = true
+    
+
+    local addFiller = 'No trains past this time'
     --Insert titles
     if #mergedTrips == 0 then
         finalTrips[1] = {type = 'info', title = 'INFO', text = 'No direct service between stops.'}
-        addFiller = false
+        addFiller = ''
     elseif #finalTrips == 0 then
         finalTrips[1] = {type = 'info', title = 'INFO', text = 'No more trains scheduled today :('}
-        addFiller = false
+        addFiller = ''
     elseif today == date then --if today
         if not includeDeparted then
             if #finalTrips >= 1 then
@@ -254,8 +258,17 @@ function api.getTrainTimes(self, from, to, date, includeDeparted)
         table.insert(finalTrips, {type = 'stations', names = stationNames})
     end
 
+    
+
+    if alerts then
+        for _, alert in pairs(alerts) do
+            table.insert(finalTrips, 1, alert)
+        end
+        --if #trips == 0 then addFiller = '' end
+    end
+
     if addFiller then
-        table.insert(finalTrips, {type = 'filler'})
+        table.insert(finalTrips, {type = 'filler', text = addFiller})
     end
 
     return finalTrips
