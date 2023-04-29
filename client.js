@@ -361,7 +361,6 @@ function getTripInfo(carrier, id, to, from) {
         devInfo.appendChild(tripId)
         tripInfoScrollBox.appendChild(devInfo)
 
-        console.log('Trip ID: ' + id)
       } else if (tripInfo.error) {
         var error = document.createElement('p')
         error.textContent = tripInfo.error
@@ -427,6 +426,7 @@ function getTrainTime(date, clearSchedules, addFiller) {
               } else {
                 //document.getElementById('tripPrediction').textContent = direction + ' • ' + prediction
               }
+              console.log('Trip ID: ' + id)
               getTripInfo(carrier, id, toStation, fromStation)
             }
 

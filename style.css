@@ -1178,7 +1178,7 @@ body {
     top: calc(var(--px35) / 4);
 }
 
-.alert #line {
+.alert .line {
     position: relative;
     width: calc(100% - var(--px15));
     height: var(--px35);
@@ -1193,7 +1193,7 @@ body {
     overflow: hidden;
 }
 
-.alert #text {
+.alert .text {
     position: relative;
     width: calc(100% - var(--px15) * 2);
     line-height: var(--px20);

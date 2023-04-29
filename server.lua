@@ -141,6 +141,8 @@ local server = assert(httpServer.listen({
     onstream = onStream
 }))
 
+api:getStopNames()
+
 assert(server:listen())
 
 while 1 do

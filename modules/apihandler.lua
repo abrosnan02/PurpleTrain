@@ -159,7 +159,7 @@ function api.getTripInfo(self, carrier, id, to, from)
     if carrierModule.getTripInfo then
         local tripInfo = carrierModule:getTripInfo(carrier, id, to, from)
 
-        if not tripInfo then return {error = 'No data for this trip'} end
+        if not tripInfo then return {error = 'No data for this trip yet'} end
 
         for _, stop in pairs(tripInfo.path) do
             stop.time = dateTimeTo12Hour(convertTimeStamp(stop.time))

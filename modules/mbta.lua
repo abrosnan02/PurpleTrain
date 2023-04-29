@@ -203,7 +203,8 @@ function mbta.getTripInfo(self, carrier, id, to, from)
 
     to = self:nameToId(to)
     from = self:nameToId(from)
-
+    
+    if not tripSchedules[1] then return end
     tripInfo.scheduleId = tripSchedules[1].id
 
     local tripStarted = false

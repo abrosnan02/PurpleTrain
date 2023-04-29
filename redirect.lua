@@ -42,7 +42,7 @@ local server = assert(httpServer.listen({
 assert(server:listen())
 
 while 1 do
-    local _, err = assert(server:loop()) --pcall if production
+    local _, err = pcall(server:loop()) --pcall if production
     if err then
         print(err)
     end
