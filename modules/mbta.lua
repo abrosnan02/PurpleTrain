@@ -289,8 +289,10 @@ function mbta.request(self, from, to, date)
                             tostring(self:getFare(schedule.relationships.stop.data.id,
                             correspondingSchedule.relationships.stop.data.id)),
 
-                        from = fromName,
-                        to = toName, --from station stop sequence
+                            fromId = from,
+                            toId = to,
+                            from = fromName,
+                            to = toName, --from station stop sequence
                         stopSequence = correspondingSchedule.attributes.stop_sequence,
 
                         scheduledTime = correspondingSchedule.attributes.departure_time,
@@ -304,10 +306,11 @@ function mbta.request(self, from, to, date)
             end
         end        
 
+        local predictions
         if os.date("%Y-%m-%d") == date then --if today get predictions
-            local predictions = request(
+            predictions = request(
                 'predictions',
-                'sort=time&include=alerts&filter[trip]=' .. predictionTripIds,
+                'sort=time&filter[trip]=' .. predictionTripIds,
                 cache.predictionCacheTime
             )
         end
@@ -328,6 +331,8 @@ function mbta.request(self, from, to, date)
         end
 
         local finalAlerts = {}
+        local currentAlert = ''
+        local usedIds = {}
         if alerts then
             for _, alert in pairs(alerts) do
                 --filter for new and relevant alerts
@@ -336,14 +341,21 @@ function mbta.request(self, from, to, date)
                 local stop
                 for _, entity in pairs(alert.attributes.informed_entity) do
                     if entity.stop == from or entity.stop == to then --if our stops are affected
-                        stop = true
-                        table.insert(finalAlerts, {type = 'alert', title = string.upper(alert.attributes.service_effect) or 'ALERT', text = alert.attributes.header})
+                        for _, id in pairs(usedIds) do
+                            if alert.id == id then stop = true end
+                        end
+
+                        if not stop then
+                            table.insert(finalAlerts, {type = 'alert', title = string.upper(alert.attributes.service_effect) or 'ALERT', text = alert.attributes.header})
+                            table.insert(usedIds, alert.id)
+                            currentAlert =  alert.attributes.header
+                        end
                     end
                 end
 
                 --if only alerts dont say no more trains
                 --if not stop and #trips > 0 then
-                    --table.insert(finalAlerts, {type = 'alert', title = string.upper(alert.attributes.service_effect) or 'ALERT', text = alert.attributes.header})
+                --    table.insert(finalAlerts, {type = 'alert', title = string.upper(alert.attributes.service_effect) or 'ALERT', text = alert.attributes.header})
                 --end
             end
         end
@@ -352,12 +364,12 @@ function mbta.request(self, from, to, date)
             for index = 1, #trips do --go through all trips
                 for _, prediction in pairs(predictions) do
                     if trips[index].id == prediction.relationships.trip.data.id then
-                        if prediction.relationships.stop.data.id == trips[index].from then
+                        if prediction.relationships.stop.data.id == trips[index].fromId then
                             --if prediction then set predictedTime
-                            predictedTime = prediction.attributes.departure_time
-                            print(predictedTime)
+                            trips[index].predictedTime = prediction.attributes.departure_time
                             break
                         end
+
                         if prediction.attributes.stop_sequence > trips[index].stopSequence then
                             --if train is early, mark as passed so schedule is not shown
                             trips[index].vehiclePassed = true

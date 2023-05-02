@@ -112,6 +112,7 @@ local function finalizeTrip(trip) --make everything human readable
     trip.duration = epochToString(trip.duration)
 
     trip.wait, epoch = epochToString(trip.wait)
+
     trip.prediction, predictionEpoch = epochToString(trip.prediction)
 
     if predictionEpoch > 0 then
@@ -204,7 +205,7 @@ function api.getTrainTimes(self, from, to, date, includeDeparted)
     local finalTrips = {}
     if today == date and not includeDeparted then
         for index, trip in pairs(mergedTrips) do
-            if os.time() <= trip.predictedTime + 60 then --add 60 to display on predicted min
+            if not trip.vehiclePassed and os.time() <= trip.predictedTime + 60 then --add 60 to display on predicted min
                 table.insert(finalTrips, mergedTrips[index])
             end
         end
