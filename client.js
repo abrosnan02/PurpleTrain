@@ -310,7 +310,7 @@ function getTripInfo(carrier, id, to, from) {
 
       var filler = document.createElement('div')
       filler.style.width = 'auto'
-      filler.style.height = 'var(--px35)'
+      filler.style.height = 'var(--px15)'
       tripInfoScrollBox.appendChild(filler)
       
 
@@ -369,10 +369,7 @@ function getTripInfo(carrier, id, to, from) {
         tripInfoScrollBox.appendChild(tripPath)
 
         if (tripInfo.headsign) {
-          var tripHeadsign = document.createElement('div')
-          tripHeadsign.classList.add("tripId")
-          tripHeadsign.textContent = tripInfo.headsign
-          devInfo.appendChild(tripHeadsign)
+          document.getElementById('tripHeadsign').textContent = tripInfo.headsign.toUpperCase()
         }
 
         if (tripInfo.scheduleId) {
@@ -419,7 +416,7 @@ function getTrainTime(date, clearSchedules, addFiller) {
       }
 
       trainTimes = await response.json()
-
+      document.getElementById('tripHeadsign').textContent = ''
       if (trainTimes) {
         if (clearSchedules) {schedules.textContent = ''}
 
@@ -442,6 +439,7 @@ function getTrainTime(date, clearSchedules, addFiller) {
               //document.getElementById('tripId').innerHTML = '<strong>Trip ID: </strong>' + id
               document.getElementById('tripTitle').innerHTML = 'Train ' + String(number) + '<strong> ' + carrier + '</strong>'
               document.getElementById('tripRoute').textContent = route
+              
               if (prediction == '') {
                 //document.getElementById('tripPrediction').textContent = direction + ' • On time'
               } else {

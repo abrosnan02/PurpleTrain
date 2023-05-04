@@ -243,10 +243,15 @@ function mbta.getTripInfo(self, carrier, id, to, from)
 
             if id == to then
                 tripStarted = false
-                return tripInfo
             end
         end
+        
+        if stop == #tripSchedules and not tripInfo.headsign then
+            tripInfo.headsign = 'To ' .. self:idToName(schedule.relationships.stop.data.id)
+        end
     end
+
+    return tripInfo
 end
 
 function mbta.request(self, from, to, date)
