@@ -2,7 +2,7 @@
 
 <html lang="en">
     <head>
-        <title>MBTA Train Time - PurpleTrain</title>
+        <title>PurpleTrain - MBTA Train Time</title>
         <meta name="description" content="Live MBTA train schedules">
         <meta charset="UTF-8">
         <link rel="stylesheet" href="style.css">
@@ -83,6 +83,7 @@
                 <button class="button" id="backButton" onclick="closeCalendar(); updateButtons()">DONE</button>
             </div>
         </div>
+
         <div class="tripInformation" id="tripInformation">
             <div id="map">
                 <div class="tripHeader">
@@ -96,114 +97,26 @@
                     <p class="tripPrediction" id="tripPrediction">DIRECTION PREDICTION</p-->
                     <p class="error">No data for Amtrak</p>
                     <div class="tripPath" id="tripPath">
-                        <div class="stop">
-                            <p class="originTime">12:00<strong>PM</strong></p>
-                            <div class="origin">
-                                <div class="line"></div>
-                                <div class="dot"></div>
-                            </div>
-                            <div class="stopName bold">Rockport</div>
-                        </div>
-                        <div class="stop">
-                            <p class="infillTime">12:07<strong>PM</strong></p>
-                            <div class="infill">
-                                <div class="line"></div>
-                                <div class="dot"></div>
-                            </div>
-                            <p class="stopName">Gloucester</p>
-                        </div>
-                        <div class="stop">
-                            <p class="infillTime">12:15<strong>PM</strong></p>
-                            <div class="infill">
-                                <div class="line"></div>
-                                <div class="dot"></div>
-                            </div>
-                            <p class="stopName">West Gloucester</p>
-                        </div>
-                        <div class="stop">
-                            <p class="infillTime">12:00<strong>PM</strong></p>
-                            <div class="infill">
-                                <div class="line"></div>
-                                <div class="dot"></div>
-                            </div>
-                            <p class="stopName">Manchester</p>
-                        </div>
-                        <div class="stop">
-                            <p class="infillTime">12:00<strong>PM</strong></p>
-                            <div class="infill">
-                                <div class="line"></div>
-                                <div class="dot"></div>
-                            </div>
-                            <p class="stopName">Beverly Farms</p>
-                        </div>
-                        <div class="stop">
-                            <p class="infillTime">12:00<strong>PM</strong></p>
-                            <div class="infill">
-                                <div class="line"></div>
-                                <div class="dot"></div>
-                            </div>
-                            <p class="stopName">Montserrat</p>
-                        </div>
-                        <div class="stop">
-                            <p class="infillTime">12:00<strong>PM</strong></p>
-                            <div class="infill">
-                                <div class="line"></div>
-                                <div class="dot"></div>
-                            </div>
-                            <p class="stopName">Beverly</p>
-                        </div>
-                        <div class="stop">
-                            <p class="infillTime">12:45<strong>PM</strong></p>
-                            <div class="infill">
-                                <div class="line"></div>
-                                <div class="dot"></div>
-                            </div>
-                            <p class="stopName">Salem<p>
-                        </div>
-                        <div class="stop">
-                            <p class="infillTime">12:50<strong>PM</strong></p>
-                            <div class="infill">
-                                <div class="line"></div>
-                                <div class="dot"></div>
-                            </div>
-                            <p class="stopName">Swampscott</p>
-                        </div>
-                        <div class="stop">
-                            <p class="infillTime">12:55<strong>PM</strong></p>
-                            <div class="infill">
-                                <div class="line"></div>
-                                <div class="dot"></div>
-                            </div>
-                            <p class="stopName">Lynn</p>
-                        </div>
-                        <div class="stop">
-                            <p class="infillTime">1:00<strong>PM</strong></p>
-                            <div class="infill">
-                                <div class="line"></div>
-                                <div class="dot"></div>
-                            </div>
-                            <p class="stopName">Chelsea</p>
-                        </div>
-                        <div class="stop">
-                            <p class="originTime">1:15<strong>PM</strong></p>
-                            <div class="terminus">
-                                <div class="line"></div>
-                                <div class="dot"></div>
-                            </div>
-                            <p class="stopName bold">North Station</p>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
             
-            
             <div id="trainInformation">
-                <!--div class="devInfo">
-                    <p id="vehicleId"><strong>Vehicle ID: </strong>9999</p>
-                    <p id="tripId"><strong>Trip ID: </strong>CR-99999-999</p>
-                </div-->
+                <div class="button" id="backButton" onclick="closeTripInfo()">
+                    <img class="buttonImage2" src="images/back.svg" style="scale: 90%">
+                    <p class="buttonText">BACK</p>
+                </div>
+                <div class="button" id="copyLinkButton" onclick="closeTripInfo()">
+                    <img class="buttonImage2" src="images/copy.svg" style="scale: 95%">
+                    <p class="buttonText">COPY LINK</p>
+                </div>
+                <div class="button" id="addToTripButton" onclick="closeTripInfo()">
+                    <img class="buttonImage2" src="images/add.svg">
+                    <p class="buttonText">ADD TO TRIP</p>
+                </div>
             </div>
-            <button class="button" id="backButton" onclick="closeTripInfo()">BACK</div>
+            
         </div>
     </body>
 </html>

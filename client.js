@@ -313,9 +313,6 @@ function getTripInfo(carrier, id, to, from) {
       filler.style.height = 'var(--px15)'
       tripInfoScrollBox.appendChild(filler)
       
-
-      
-
       if (tripInfo.path) {
         var stops = tripInfo.path.length
         for (var i = 0; i < stops; i++) {
@@ -345,6 +342,7 @@ function getTripInfo(carrier, id, to, from) {
 
             if (i == stops - 1) {
               dotBox.classList.add("terminus")
+              stop.classList.add('padStop')
             } else {
               dotBox.classList.add("origin")
             }
@@ -358,13 +356,6 @@ function getTripInfo(carrier, id, to, from) {
           stop.appendChild(dotBox)
           tripPath.appendChild(stop)
         }
-        
-        var devInfo = document.createElement('div')
-        devInfo.classList.add("devInfo")
-
-        var tripId = document.createElement('div')
-        tripId.classList.add("tripId")
-        tripId.textContent =  ''
 
         tripInfoScrollBox.appendChild(tripPath)
 
@@ -373,12 +364,8 @@ function getTripInfo(carrier, id, to, from) {
         }
 
         if (tripInfo.scheduleId) {
-          console.log('Schedule ID: ' + tripInfo.scheduleId)
+          console.log('SCHEDULE ID: ' + tripInfo.scheduleId)
         }
-
-        devInfo.appendChild(tripId)
-        tripInfoScrollBox.appendChild(devInfo)
-
       } else if (tripInfo.error) {
         var error = document.createElement('p')
         error.textContent = tripInfo.error
@@ -395,6 +382,7 @@ function closeTripInfo() {
 
 function getTrainTime(date, clearSchedules, addFiller) {
   var today = new Date().yyyymmdd();
+  document.getElementById('tripHeadsign').textContent = ''
   
   if (currentDay > 0) {return}
   disableButtons(.25)
@@ -416,7 +404,7 @@ function getTrainTime(date, clearSchedules, addFiller) {
       }
 
       trainTimes = await response.json()
-      document.getElementById('tripHeadsign').textContent = ''
+      
       if (trainTimes) {
         if (clearSchedules) {schedules.textContent = ''}
 
@@ -445,7 +433,7 @@ function getTrainTime(date, clearSchedules, addFiller) {
               } else {
                 //document.getElementById('tripPrediction').textContent = direction + ' • ' + prediction
               }
-              console.log('Trip ID: ' + id)
+              console.log('TRIP ID: ' + id)
               getTripInfo(carrier, id, toStation, fromStation)
             }
 
@@ -545,10 +533,7 @@ function updateButtons() {
   if (fromStation == toStation) {
     schedules.textContent = ''
 
-    var title = document.createElement('p')
-    title.classList.add("scheduleTitle")
-    title.textContent = 'Please enter a different station'
-    schedules.appendChild(title)
+    message('info', 'INFO', 'Please enter two different stations.')
 
     return
   }

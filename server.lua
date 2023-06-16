@@ -68,6 +68,9 @@ local allowedPaths = {
     ['/favicon.ico'] = {path = 'images/favicon.ico', mime = 'image/x-icon'},
     ['/images/swap.svg'] = {path = 'images/swap.svg', mime = 'image/svg+xml'},
     ['/images/calendar.svg'] = {path = 'images/calendar.svg', mime = 'image/svg+xml'},
+    ['/images/copy.svg'] = {path = 'images/copy.svg', mime = 'image/svg+xml'},
+    ['/images/add.svg'] = {path = 'images/add.svg', mime = 'image/svg+xml'},
+    ['/images/back.svg'] = {path = 'images/back.svg', mime = 'image/svg+xml'},
     ['/images/alert.svg'] = {path = 'images/alert.svg', mime = 'image/svg+xml'},
     ['/images/info.svg'] = {path = 'images/info.svg', mime = 'image/svg+xml'},
 }

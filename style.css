@@ -404,7 +404,7 @@ body {
     border-radius: calc(var(--stationBoxHeight) / 2);
     font-weight: 700;
     font-size: var(--stationBoxFontSize);
-
+    color: var(--buttonTextColor);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -885,16 +885,56 @@ body {
 
 .tripInformation #backButton {
     position: absolute;
-    border: none;
-    bottom: var(--px50);
-    left: calc(50% - var(--px100));
-    height: var(--stationBoxHeight);
-    width: var(--px200);
-    text-align: center;
-    font-weight: 700;
-    font-size: var(--px16);
-    border-radius: var(--switchDirButtonHeight);
+    bottom: var(--px20);
+    right: calc(var(--px10) - 1px);
+    width: calc(100% - var(--px20));
+    height: calc(100% - var(--px40));
+    border-top-right-radius: var(--px16);
+    border-bottom-right-radius: var(--px16);
+    border-top-left-radius: var(--px16);
+    border-bottom-left-radius: var(--px16);
     z-index: 999;
+}
+
+.tripInformation #addToTripButton {
+    position: absolute;
+    visibility: hidden;
+    bottom: var(--px20);
+    left: calc(33.333% + 1px);
+    width: calc(33.333% - 2px);
+    height: calc(100% - var(--px40));
+    z-index: 999;
+}
+
+.tripInformation #copyLinkButton {
+    position: absolute;
+    visibility: hidden;
+    bottom: var(--px20);
+    left: calc(var(--px10) - 1px);
+    width: calc(33.333% - var(--px10));
+    height: calc(100% - var(--px40));
+    border-top-left-radius: var(--px16);
+    border-bottom-left-radius: var(--px16);
+    z-index: 999;
+}
+
+.buttonText {
+    position: absolute;
+    font-weight: 700;
+    width: 100%;
+    height: 35%;
+    bottom: 0%;
+    font-size: var(--px14);
+    text-align: center;
+    vertical-align: bottom;
+}
+
+.buttonImage2 {
+    position: absolute;
+    width: 30%;
+    height: 30%;
+    left: calc(50% - 30% / 2);
+    top: 20%;
 }
 
 .tripInfoScrollBox {
@@ -915,7 +955,7 @@ body {
     font-size: var(--px25);
     font-weight: 700;
     color: rgba(245, 245, 245, .6);
-    top: calc(50% - var(--px20))
+    top: calc(50% - var(--px20));
 }
 
 .tripPath {
@@ -930,6 +970,10 @@ body {
     width: calc(100% - var(--scheduleTitlePaddingLeft) * 2);
     left: var(--scheduleTitlePaddingLeft);
     height: var(--stopWidth);
+}
+
+.padStop {
+    padding-bottom: var(--stopWidth);
 }
 
 .tripPath .stop .infillTime {
@@ -1113,7 +1157,7 @@ body {
 
 .tripHeadsign {
     font-size: var(--px15);
-    font-weight: 600;
+    font-weight: 700;
     color: var(--white);
     padding-left: calc(var(--scheduleTitlePaddingLeft));
 }
@@ -1122,26 +1166,6 @@ body {
     font-size: var(--px18);
     font-weight: 700;
     padding-left: var(--scheduleTitlePaddingLeft);
-}
-
-.devInfo {
-    width: 85%;
-    margin-left: 7.5%;
-    height: auto;
-    text-align: center;
-    margin-bottom: var(--px35);
-    margin-top: var(--px35);
-    color: var(--white);
-    opacity: .85;
-    font-size: var(--px22);
-    font-weight: 700;
-}
-
-.devInfo p {
-    width: 100%;
-    height: var(--px25);
-    line-height: var(--px25);
-    
 }
 
 .text {

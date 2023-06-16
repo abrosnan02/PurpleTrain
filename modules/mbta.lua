@@ -48,13 +48,12 @@ local function request(path, query, cacheTime)
         query = 'api_key=' .. key .. '&' .. query,
         authority = 'api-v3.mbta.com'
     }
-    --print(uri.host .. uri.path .. '?' .. uri.query)
 
     local uriString = 'https://api-v3.mbta.com/' 
         .. path
         .. '?api_key=' .. key
         .. '&' .. query --for some reason http doesn't like the string
-    
+        
     local body = cache:get(uriString)
 
     if not body then
@@ -70,9 +69,10 @@ local function request(path, query, cacheTime)
 
         local data = decodedBody.data
         local errors = decodedBody.errors
-
+        
         if data then
             cache:set(uriString, body, cacheTime or cache.cacheTime)
+            
             return data, decodedBody.included
         elseif errors then
             for _, message in pairs(errors) do
@@ -104,17 +104,21 @@ function mbta.cache(self)
 
     print('Getting CR routes...')
     self.routes = request('routes', 'filter[type]=2')
+
     print('Getting CR stops...')
-    self.stops = request('stops', 'sort=name&filter[route_type]=2')
+    local routeString = ''
+    for _, route in pairs(self.routes) do
+        routeString = routeString .. route.id .. ','
+    end
+
+    --get all place-stops from route names
+    self.stops = request('stops', 'sort=name&filter[route]=' .. routeString:sub(1,-2))
     --print('Getting subway stops...')
     --self.subwayStops = request('stops', 'sort=name&filter[route_type]=0,1')
 
     self.stopNames = {} --Clear all stop names
     
-    local placeNames = '' --string of place names for route request
     for _, stop in pairs(self.stops) do --insert name strings for autocomplete
-        placeNames = placeNames .. stop.relationships.parent_station.data.id .. ','
-
         local name = stop.attributes.name
         local municipality = stop.attributes.municipality
         if name ~= municipality then --include city name if not same as station name
@@ -195,9 +199,9 @@ function mbta.getFare(self, toId, fromId)
 end
 
 function mbta.getTripInfo(self, carrier, id, to, from)
-    local tripSchedules = request('schedules', --get full path for train selected
-        'sort=time&filter[trip]=' .. tostring(id), 15)
-    
+    local tripSchedules, stops = request('schedules', --get full path for train selected
+        'sort=time&include=stop&filter[trip]=' .. tostring(id), 15)
+
     local tripInfo = {
         path = {} --contains tables containing stop ID and time
     }
@@ -211,6 +215,12 @@ function mbta.getTripInfo(self, carrier, id, to, from)
     local tripStarted = false
     for stop, schedule in pairs(tripSchedules) do
         local id = schedule.relationships.stop.data.id
+
+        for _, apiStop in pairs(stops) do --get the place-id
+            if apiStop.id == id then
+                id = apiStop.relationships.parent_station.data.id
+            end
+        end
 
         if not tripStarted then
             if id == from then
@@ -246,8 +256,13 @@ function mbta.getTripInfo(self, carrier, id, to, from)
             end
         end
         
+        --if no headsign found use last stop as headsign
         if stop == #tripSchedules and not tripInfo.headsign then
-            tripInfo.headsign = 'To ' .. self:idToName(schedule.relationships.stop.data.id)
+            for _, apiStop in pairs(stops) do --get the place-id
+                if apiStop.id == schedule.relationships.stop.data.id then
+                    tripInfo.headsign = 'To ' .. self:idToName(apiStop.relationships.parent_station.data.id)
+                end
+            end
         end
     end
 
@@ -261,22 +276,33 @@ function mbta.request(self, from, to, date)
     local to, toName = self:nameToId(to)
 
     if (from and to) then
-        local possibleSchedules = request('schedules', --get all schedules for both stations
-        'sort=time' ..
+        local possibleSchedules, stops = request('schedules', --get all schedules for both stations
+        'sort=time&include=stop&filter[route_type]=2' ..
         '&filter[date]=' .. date ..
-        '&filter[stop]=' .. from .. ',' .. to) or {} --or {} in case of no schedules
+        '&filter[stop]=' .. from .. ',' .. to) --or {} in case of no schedules
 
         local trips = {}
         local possibleTripSchedules = {}
         local predictionTripIds = '' --appended as prediction query
 
+        local translation = {} --this is fucking stupid that i have to do this
+        for _, stop in pairs(stops) do --make the key the id (with track)
+            if stop.relationships.parent_station.data.id == to then
+                translation[stop.id] = to
+            end
+
+            if stop.relationships.parent_station.data.id == from then
+                translation[stop.id] = from
+            end
+        end
+        
         for _, schedule in pairs(possibleSchedules) do
             local id = schedule.relationships.trip.data.id
             
             --2. if corresponding schedule is found make trip table
             local correspondingSchedule = possibleTripSchedules[id]
-            if correspondingSchedule then
-                if schedule.relationships.stop.data.id == to and schedule.attributes.stop_sequence > correspondingSchedule.attributes.stop_sequence then
+            if correspondingSchedule then --if translation exists then stop id == destination
+                if translation[schedule.relationships.stop.data.id] == to and schedule.attributes.stop_sequence > correspondingSchedule.attributes.stop_sequence then
                     predictionTripIds =  predictionTripIds .. id .. ','
 
                     local direction, route =
@@ -290,14 +316,12 @@ function mbta.request(self, from, to, date)
                         route = route,
                         number = tonumber(string.match(id, '%w+$')) or string.match(id, '(%d+)-(%w+)$'), --in case of event schedules
                         direction = direction,
-                        fare = '$' .. 
-                            tostring(self:getFare(schedule.relationships.stop.data.id,
-                            correspondingSchedule.relationships.stop.data.id)),
+                        fare = '$' .. tostring(self:getFare(from,to)),
 
-                            fromId = from,
-                            toId = to,
-                            from = fromName,
-                            to = toName, --from station stop sequence
+                        fromId = from,
+                        toId = to,
+                        from = fromName,
+                        to = toName, --from station stop sequence
                         stopSequence = correspondingSchedule.attributes.stop_sequence,
 
                         scheduledTime = correspondingSchedule.attributes.departure_time,
@@ -384,7 +408,7 @@ function mbta.request(self, from, to, date)
                 end
             end
         end
-        
+
         return trips, finalAlerts, {from = fromName, to = toName}
     end
 end
