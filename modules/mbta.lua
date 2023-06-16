@@ -54,6 +54,7 @@ local function request(path, query, cacheTime)
         .. '?api_key=' .. key
         .. '&' .. query --for some reason http doesn't like the string
         
+    print(uriString)
     local body = cache:get(uriString)
 
     if not body then
@@ -402,8 +403,9 @@ function mbta.request(self, from, to, date)
                         if prediction.attributes.stop_sequence > trips[index].stopSequence then
                             --if train is early, mark as passed so schedule is not shown
                             trips[index].vehiclePassed = true
-                            break
                         end
+
+                        break --break at first prediction, this is the most recent stop
                     end
                 end
             end
