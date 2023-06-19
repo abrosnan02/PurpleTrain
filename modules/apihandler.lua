@@ -135,14 +135,18 @@ local function finalizeTrip(trip) --make everything human readable
 end
 
 local function getCarrierTrips(from, to, date, carrier)
-    local trips, alerts, stationNames = carrier:request(from, to, date)
-
+    local trips, alerts, stationNames, errors = carrier:request(from, to, date)
+    
+    if errors then
+        return nil, nil, nil, errors
+    end
+    
     if trips then
         for trip = 1, #trips do --normalize trips
             trips[trip] = normalizeTrip(trips[trip])
         end
         
-        return trips, alerts, stationNames
+        return trips, alerts, stationNames, errors
     end
 end
 
@@ -182,11 +186,14 @@ function api.getTrainTimes(self, from, to, date, includeDeparted)
     local carrierTrips = {} --contains tables of each carrier's trips
     local stationNames
     local alerts
+    local errors
     for index, carrier in pairs(carriers) do --get trips for each carrier
-        carrierTrips[carrier.name], finalAlerts, stations = getCarrierTrips(from, to, date, carrier)
+        carrierTrips[carrier.name], finalAlerts, stations, apiError = getCarrierTrips(from, to, date, carrier)
+
+        if apiError then errors = apiError end
         if carrier.name == 'MBTA' then stationNames = stations alerts = finalAlerts end
     end
-
+    
     local mergedTrips = {}
     for _, carrier in pairs(carrierTrips) do
         for _, trip in pairs(carrier) do
@@ -259,8 +266,6 @@ function api.getTrainTimes(self, from, to, date, includeDeparted)
         table.insert(finalTrips, {type = 'stations', names = stationNames})
     end
 
-    
-
     if alerts then
         for _, alert in pairs(alerts) do
             table.insert(finalTrips, 1, alert)
@@ -270,6 +275,13 @@ function api.getTrainTimes(self, from, to, date, includeDeparted)
 
     if addFiller then
         table.insert(finalTrips, {type = 'filler', text = addFiller})
+    end
+
+    if errors then
+        finalTrips = {}
+        for _, message in pairs(errors) do
+            table.insert(finalTrips, {type = 'info', title = tostring(message.code):upper(), text = message.detail})
+        end
     end
 
     return finalTrips

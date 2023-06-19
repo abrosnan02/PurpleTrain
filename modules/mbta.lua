@@ -82,6 +82,8 @@ local function request(path, query, cacheTime)
                 print(colors('%{red}' .. message.detail))
                 print(colors('%{red}-------------------'))
             end
+            
+            return nil, nil, errors
         end
     end
 end
@@ -277,10 +279,14 @@ function mbta.request(self, from, to, date)
     local to, toName = self:nameToId(to)
 
     if (from and to) then
-        local possibleSchedules, stops = request('schedules', --get all schedules for both stations
+        local possibleSchedules, stops, errors = request('schedules', --get all schedules for both stations
         'sort=time&include=stop&filter[route_type]=2' ..
         '&filter[date]=' .. date ..
         '&filter[stop]=' .. from .. ',' .. to) --or {} in case of no schedules
+
+        if errors then
+            return nil, nil, nil, errors
+        end
 
         local trips = {}
         local possibleTripSchedules = {}

@@ -870,12 +870,13 @@ body {
 
 .tripInformation #trainInformation {
     position: fixed;
-    width: 100%;
-    height: calc(var(--px50) * 2 + var(--stationBoxHeight));
+    width: calc(100% - var(--px20));
+    left: var(--px10);
+    height: calc(var(--px40) * 2 + var(--stationBoxHeight));
     max-width: 500px;
-    bottom: 0;
+    bottom: var(--px20);
     background-color: hsla(240, 12%, 25%, 0.25);
-
+    border-radius: var(--px20);
 
     box-shadow: 0px 0px 20px 10px rgba(0,0,0,.25);
     backdrop-filter: blur(40px);
@@ -885,34 +886,30 @@ body {
 
 .tripInformation #backButton {
     position: absolute;
-    bottom: var(--px20);
-    right: calc(var(--px10) - 1px);
-    width: calc(100% - var(--px20));
-    height: calc(100% - var(--px40));
+    bottom: var(--px5);
+    right: calc(var(--px5));
+    width: calc(33.333% - var(--px5) - 1px);
+    height: calc(100% - var(--px10));
     border-top-right-radius: var(--px16);
     border-bottom-right-radius: var(--px16);
-    border-top-left-radius: var(--px16);
-    border-bottom-left-radius: var(--px16);
     z-index: 999;
 }
 
 .tripInformation #addToTripButton {
     position: absolute;
-    visibility: hidden;
-    bottom: var(--px20);
-    left: calc(33.333% + 1px);
-    width: calc(33.333% - 2px);
-    height: calc(100% - var(--px40));
+    bottom: var(--px5);
+    left: calc(33.333% + 2px);
+    width: calc(33.333% - 4px);
+    height: calc(100% - var(--px10));
     z-index: 999;
 }
 
 .tripInformation #copyLinkButton {
     position: absolute;
-    visibility: hidden;
-    bottom: var(--px20);
-    left: calc(var(--px10) - 1px);
-    width: calc(33.333% - var(--px10));
-    height: calc(100% - var(--px40));
+    bottom: var(--px5);
+    left: calc(var(--px5));
+    width: calc(33.333% - var(--px5) - 1px);
+    height: calc(100% - var(--px10));
     border-top-left-radius: var(--px16);
     border-bottom-left-radius: var(--px16);
     z-index: 999;

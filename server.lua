@@ -1,6 +1,6 @@
 --[[
     PurpleTrain HTTP Server
-    Anthony Brosnan, January 2023 - April 2023
+    Anthony Brosnan, January 2023 - June 2023
 ]]--
 
 --/Main Variables/--------------------------------------------------------------
